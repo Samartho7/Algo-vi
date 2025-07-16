@@ -1,0 +1,120 @@
+{
+  "name": "AlgoVi - Algorithm Visualization Platform",
+  "short_name": "AlgoVi",
+  "description": "Interactive algorithm visualization and coding platform for learning data structures and algorithms",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["education", "productivity", "developer"],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Algorithm visualization dashboard"
+    },
+    {
+      "src": "/screenshots/mobile-1.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Mobile coding interface"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/algovi-icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/algovi-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Visual Algorithm",
+      "short_name": "Visualize",
+      "description": "Start visualizing algorithms",
+      "url": "/visualize",
+      "icons": [
+        {
+          "src": "/icons/visualize-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Code Editor",
+      "short_name": "Code",
+      "description": "Open the code editor",
+      "url": "/editor",
+      "icons": [
+        {
+          "src": "/icons/editor-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Algorithms Library",
+      "short_name": "Library",
+      "description": "Browse algorithm library",
+      "url": "/library",
+      "icons": [
+        {
+          "src": "/icons/library-shortcut.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}
