@@ -1,12 +1,37 @@
-# React + Vite
+# 🔍 Algorithm Visualizer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive algorithm visualization tool supporting Sorting and Linked List animations with step-by-step code execution and modern UI.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔢 Visualize Bubble, Selection, Merge, Insertion, and Quick Sort
+- 🔗 Linked List Insertion at Head (Singly)
+- 💻 Multi-language code viewer (C, C++, Java)
+- 🪄 Beautiful animations with Framer Motion
+- 📊 Time & Space complexity display
+- 🔄 Compare algorithms side-by-side
 
-## Expanding the ESLint configuration
+## 📦 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React + Tailwind CSS
+- Framer Motion
+- Firebase (optional)
+- Monaco Editor
+- Context API + Hooks
+
+## 📁 Project Structure
+
+```bash
+/src
+  /components
+    Topbar.jsx
+    Sidebar.jsx
+    CodeEditor.jsx
+    Visualizer.jsx
+    Controls.jsx
+  /utils
+    parseAlgorithms.js
+    complexityInfo.js
+    codeTemplates.js
+  App.jsx
+  index.css
