@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { complexityInfo } from "../utils/complexityInfo";
 
-export default function Visualizer({ step, stepIndex, algorithm }) {
+export default function Visualizer({ step, algorithm }) {
   // 🔁 Linked List Visual (e.g., Singly Insert at Head)
   if (algorithm === "singly_insert_head") {
     return (
@@ -160,6 +160,119 @@ export default function Visualizer({ step, stepIndex, algorithm }) {
               <span>Tail</span>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🧠 Search Visualization (Linear / Binary)
+  if (algorithm?.includes("search")) {
+    return (
+      <div className="flex flex-col h-full overflow-hidden bg-gradient-to-br from-slate-50 to-indigo-50">
+        {/* Header */}
+        <div className="flex-shrink-0 p-4 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
+          <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+            🔍 Search Visualization
+          </h2>
+        </div>
+
+        {/* Main Container */}
+        <div className="flex-1 p-4 overflow-hidden">
+          <div className="h-full p-4 bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col">
+            <div className="flex-1 flex gap-2 justify-center items-end py-4">
+              <AnimatePresence>
+                {step?.array?.map(({ id, value }, i) => {
+                  const isCompared =
+                    step.indices?.includes(i) && step.action === "compare";
+                  const isFound =
+                    step.indices?.includes(i) && step.action === "found";
+                  const isLeft =
+                    step.indices?.includes(i) && step.action === "left";
+                  const isRight =
+                    step.indices?.includes(i) && step.action === "right";
+
+                  let bgColor = "bg-slate-400";
+                  if (isFound) bgColor = "bg-green-500";
+                  else if (isCompared) bgColor = "bg-yellow-400";
+                  else if (isLeft || isRight) bgColor = "bg-blue-400";
+
+                  return (
+                    <motion.div
+                      key={id}
+                      initial={{ scale: 0.8, y: 20, opacity: 0 }}
+                      animate={{ scale: 1, y: 0, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0, y: 20 }}
+                      transition={{ duration: 0.3 }}
+                      className={`w-10 h-[${
+                        value * 3 + 30
+                      }px] flex items-center justify-center rounded-md font-bold border border-slate-500 text-white ${bgColor}`}
+                    >
+                      {value}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+
+            {/* Step Info */}
+            <div className="flex-shrink-0 p-3 bg-slate-50 rounded-md border border-slate-200">
+              {step && (
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>
+                      <strong>Action:</strong> {step.action}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <span>
+                      <strong>Indices:</strong>{" "}
+                      {step.indices?.join(", ") || "None"}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Complexity Info */}
+        <div className="flex-shrink-0 p-4 bg-white border-t border-slate-200">
+          {algorithm && complexityInfo[algorithm] && (
+            <div className="space-y-2">
+              <h3 className="font-semibold text-sm text-slate-800 flex items-center gap-2">
+                📈 {complexityInfo[algorithm].name}
+              </h3>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>
+                    <strong>Best:</strong> {complexityInfo[algorithm].best}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                  <span>
+                    <strong>Worst:</strong> {complexityInfo[algorithm].worst}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <span>
+                    <strong>Average:</strong>{" "}
+                    {complexityInfo[algorithm].average}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>
+                    <strong>Space:</strong> {complexityInfo[algorithm].space}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -363,4 +476,3 @@ export default function Visualizer({ step, stepIndex, algorithm }) {
     </div>
   );
 }
-

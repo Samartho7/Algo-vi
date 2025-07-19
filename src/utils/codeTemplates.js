@@ -349,6 +349,164 @@ void quickSort(int arr[], int low, int high) {
   }
 }`,
   },
+  linear_search: {
+  c: `#include <stdio.h>
+
+int linearSearch(int arr[], int n, int key) {
+  for (int i = 0; i < n; i++) {
+    if (arr[i] == key)
+      return i;
+  }
+  return -1;
+}
+
+int main() {
+  int arr[] = {4, 2, 7, 1, 9};
+  int key = 7;
+  int n = sizeof(arr) / sizeof(arr[0]);
+
+  int index = linearSearch(arr, n, key);
+  if (index != -1)
+    printf("Element found at index %d\\n", index);
+  else
+    printf("Element not found\\n");
+  return 0;
+}`,
+
+  cpp: `#include <iostream>
+using namespace std;
+
+int linearSearch(int arr[], int n, int key) {
+  for (int i = 0; i < n; i++) {
+    if (arr[i] == key)
+      return i;
+  }
+  return -1;
+}
+
+int main() {
+  int arr[] = {4, 2, 7, 1, 9};
+  int key = 7;
+  int n = sizeof(arr) / sizeof(arr[0]);
+
+  int index = linearSearch(arr, n, key);
+  if (index != -1)
+    cout << "Element found at index " << index << endl;
+  else
+    cout << "Element not found" << endl;
+  return 0;
+}`,
+
+  java: `public class LinearSearch {
+  public static int linearSearch(int[] arr, int key) {
+    for (int i = 0; i < arr.length; i++) {
+      if (arr[i] == key)
+        return i;
+    }
+    return -1;
+  }
+
+  public static void main(String[] args) {
+    int[] arr = {4, 2, 7, 1, 9};
+    int key = 7;
+    int index = linearSearch(arr, key);
+
+    if (index != -1)
+      System.out.println("Element found at index " + index);
+    else
+      System.out.println("Element not found");
+  }
+}`,
+},
+
+binary_search: {
+  c: `#include <stdio.h>
+
+int binarySearch(int arr[], int n, int key) {
+  int low = 0, high = n - 1;
+  while (low <= high) {
+    int mid = (low + high) / 2;
+    if (arr[mid] == key)
+      return mid;
+    else if (arr[mid] < key)
+      low = mid + 1;
+    else
+      high = mid - 1;
+  }
+  return -1;
+}
+
+int main() {
+  int arr[] = {1, 2, 4, 7, 9};
+  int key = 7;
+  int n = sizeof(arr) / sizeof(arr[0]);
+
+  int index = binarySearch(arr, n, key);
+  if (index != -1)
+    printf("Element found at index %d\\n", index);
+  else
+    printf("Element not found\\n");
+  return 0;
+}`,
+
+  cpp: `#include <iostream>
+using namespace std;
+
+int binarySearch(int arr[], int n, int key) {
+  int low = 0, high = n - 1;
+  while (low <= high) {
+    int mid = (low + high) / 2;
+    if (arr[mid] == key)
+      return mid;
+    else if (arr[mid] < key)
+      low = mid + 1;
+    else
+      high = mid - 1;
+  }
+  return -1;
+}
+
+int main() {
+  int arr[] = {1, 2, 4, 7, 9};
+  int key = 7;
+  int n = sizeof(arr) / sizeof(arr[0]);
+
+  int index = binarySearch(arr, n, key);
+  if (index != -1)
+    cout << "Element found at index " << index << endl;
+  else
+    cout << "Element not found" << endl;
+  return 0;
+}`,
+
+  java: `public class BinarySearch {
+  public static int binarySearch(int[] arr, int key) {
+    int low = 0, high = arr.length - 1;
+    while (low <= high) {
+      int mid = (low + high) / 2;
+      if (arr[mid] == key)
+        return mid;
+      else if (arr[mid] < key)
+        low = mid + 1;
+      else
+        high = mid - 1;
+    }
+    return -1;
+  }
+
+  public static void main(String[] args) {
+    int[] arr = {1, 2, 4, 7, 9};
+    int key = 7;
+    int index = binarySearch(arr, key);
+
+    if (index != -1)
+      System.out.println("Element found at index " + index);
+    else
+      System.out.println("Element not found");
+  }
+}`,
+},
+
   singly_insert_head: {
     c: `#include <stdio.h>
 #include <stdlib.h>

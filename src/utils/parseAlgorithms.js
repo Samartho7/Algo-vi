@@ -324,3 +324,97 @@ function buildSnapshot(head) {
   }
   return nodes;
 }
+
+export function parseLinearSearch(inputArr = [], target) {
+  const arr = inputArr.map((item, index) => ({
+    id: index,
+    value: item.value ?? item,
+  }));
+  const steps = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    steps.push({
+      action: "compare",
+      indices: [i],
+      array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+      line: { c: 6, cpp: 6, java: 5 },
+    });
+
+    if (arr[i].value === target) {
+      steps.push({
+        action: "found",
+        indices: [i],
+        array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        line: { c: 8, cpp: 8, java: 7 },
+      });
+      break;
+    }
+  }
+
+  steps.push({
+    action: "done",
+    indices: [],
+    array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+    line: { c: 1, cpp: 1, java: 1 },
+  });
+
+  return steps;
+}
+
+export function parseBinarySearch(inputArr = [], target) {
+  const arr = [...inputArr]
+    .map((item, index) => ({
+      id: index,
+      value: item.value ?? item,
+    }))
+    .sort((a, b) => a.value - b.value);
+
+  const steps = [];
+  let low = 0, high = arr.length - 1;
+
+  while (low <= high) {
+    let mid = Math.floor((low + high) / 2);
+    steps.push({
+      action: "compare",
+      indices: [mid],
+      array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+      line: { c: 7, cpp: 7, java: 6 },
+    });
+
+    if (arr[mid].value === target) {
+      steps.push({
+        action: "found",
+        indices: [mid],
+        array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        line: { c: 9, cpp: 9, java: 8 },
+      });
+      break;
+    } else if (arr[mid].value < target) {
+      steps.push({
+        action: "shiftRight",
+        indices: [mid],
+        array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        line: { c: 11, cpp: 11, java: 10 },
+      });
+      low = mid + 1;
+    } else {
+      steps.push({
+        action: "shiftLeft",
+        indices: [mid],
+        array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        line: { c: 13, cpp: 13, java: 12 },
+      });
+      high = mid - 1;
+    }
+  }
+
+  steps.push({
+    action: "done",
+    indices: [],
+    array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+    line: { c: 1, cpp: 1, java: 1 },
+  });
+
+  return steps;
+}
+
