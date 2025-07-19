@@ -97,7 +97,7 @@ export default function CodeEditor({
           
           <div className="flex items-center space-x-2 flex-shrink-0">
             {/* Live indicator */}
-            {highlightedLine && (
+            {typeof highlightedLine === "number" && (
               <div className="flex items-center space-x-2 bg-amber-100 px-2 py-1 rounded-full">
                 <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
                 <span className="text-xs font-medium text-amber-700">

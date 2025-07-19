@@ -11,7 +11,7 @@
     <meta name="keywords" content="algorithms, visualization, coding, data structures, programming, education">
     
     <!-- Icons and Manifest -->
-    <link rel="icon" type="image/svg+xml" href="/algovi-icon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/icon.svg" />
     <link rel="apple-touch-icon" href="/algovi-icon-192.png" />
     <link rel="manifest" href="/manifest.json" />
     
@@ -120,19 +120,6 @@
       });
     </script>
     
-    <!-- Service Worker for PWA -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-              console.log('SW registered: ', registration);
-            })
-            .catch(function(registrationError) {
-              console.log('SW registration failed: ', registrationError);
-            });
-        });
-      }
-    </script>
+    
   </body>
 </html>
