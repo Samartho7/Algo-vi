@@ -350,7 +350,7 @@ void quickSort(int arr[], int low, int high) {
 }`,
   },
   linear_search: {
-  c: `#include <stdio.h>
+    c: `#include <stdio.h>
 
 int linearSearch(int arr[], int n, int key) {
   for (int i = 0; i < n; i++) {
@@ -373,7 +373,7 @@ int main() {
   return 0;
 }`,
 
-  cpp: `#include <iostream>
+    cpp: `#include <iostream>
 using namespace std;
 
 int linearSearch(int arr[], int n, int key) {
@@ -397,7 +397,7 @@ int main() {
   return 0;
 }`,
 
-  java: `public class LinearSearch {
+    java: `public class LinearSearch {
   public static int linearSearch(int[] arr, int key) {
     for (int i = 0; i < arr.length; i++) {
       if (arr[i] == key)
@@ -417,10 +417,10 @@ int main() {
       System.out.println("Element not found");
   }
 }`,
-},
+  },
 
-binary_search: {
-  c: `#include <stdio.h>
+  binary_search: {
+    c: `#include <stdio.h>
 
 int binarySearch(int arr[], int n, int key) {
   int low = 0, high = n - 1;
@@ -449,7 +449,7 @@ int main() {
   return 0;
 }`,
 
-  cpp: `#include <iostream>
+    cpp: `#include <iostream>
 using namespace std;
 
 int binarySearch(int arr[], int n, int key) {
@@ -479,7 +479,7 @@ int main() {
   return 0;
 }`,
 
-  java: `public class BinarySearch {
+    java: `public class BinarySearch {
   public static int binarySearch(int[] arr, int key) {
     int low = 0, high = arr.length - 1;
     while (low <= high) {
@@ -505,7 +505,7 @@ int main() {
       System.out.println("Element not found");
   }
 }`,
-},
+  },
 
   singly_insert_head: {
     c: `#include <stdio.h>

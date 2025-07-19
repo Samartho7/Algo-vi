@@ -370,7 +370,8 @@ export function parseBinarySearch(inputArr = [], target) {
     .sort((a, b) => a.value - b.value);
 
   const steps = [];
-  let low = 0, high = arr.length - 1;
+  let low = 0,
+    high = arr.length - 1;
 
   while (low <= high) {
     let mid = Math.floor((low + high) / 2);
@@ -417,4 +418,3 @@ export function parseBinarySearch(inputArr = [], target) {
 
   return steps;
 }
-

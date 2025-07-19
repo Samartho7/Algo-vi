@@ -14,17 +14,27 @@ export default function Topbar() {
         <div className="absolute top-0 right-0 w-24 h-24 bg-white rounded-full blur-2xl animate-pulse delay-1000"></div>
         <div className="absolute bottom-0 left-1/3 w-20 h-20 bg-white rounded-full blur-2xl animate-pulse delay-500"></div>
       </div>
-      
+
       {/* Main content */}
       <div className="relative z-10 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {/* Logo/Icon */}
           <div className="flex items-center justify-center w-10 h-10 bg-white/20 rounded-lg backdrop-blur-sm">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+            <svg
+              className="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              />
             </svg>
           </div>
-          
+
           {/* Title */}
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
@@ -35,7 +45,7 @@ export default function Topbar() {
             </p>
           </div>
         </div>
-        
+
         {/* Rocket icon with animation */}
         <div className="flex items-center space-x-2">
           <div className="text-2xl animate-bounce">🚀</div>
@@ -45,7 +55,7 @@ export default function Topbar() {
           </div>
         </div>
       </div>
-      
+
       {/* Subtle bottom border with gradient */}
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
     </div>

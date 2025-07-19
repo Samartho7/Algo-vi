@@ -1,15 +1,14 @@
-
-import { 
-  Code, 
-  Settings, 
-  GitCompare, 
-  Play, 
+import {
+  Code,
+  Settings,
+  GitCompare,
+  Play,
   Database,
   ChevronDown,
   Zap,
   Layers,
-  Binary
-} from 'lucide-react';
+  Binary,
+} from "lucide-react";
 
 export default function Sidebar({
   language,
@@ -49,7 +48,9 @@ export default function Sidebar({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Code className="w-4 h-4 text-indigo-400" />
-            <label className="text-sm font-semibold text-slate-300">Programming Language</label>
+            <label className="text-sm font-semibold text-slate-300">
+              Programming Language
+            </label>
           </div>
           <div className="relative">
             <select
@@ -69,7 +70,9 @@ export default function Sidebar({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Settings className="w-4 h-4 text-emerald-400" />
-            <label className="text-sm font-semibold text-slate-300">Algorithm</label>
+            <label className="text-sm font-semibold text-slate-300">
+              Algorithm
+            </label>
           </div>
           <div className="relative">
             <select
@@ -77,15 +80,23 @@ export default function Sidebar({
               onChange={(e) => setAlgorithm(e.target.value)}
               className="w-full p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 hover:bg-slate-800/70"
             >
-              <optgroup label="🔄 Sorting Algorithms" className="text-slate-300">
+              <optgroup
+                label="🔄 Sorting Algorithms"
+                className="text-slate-300"
+              >
                 <option value="bubble">Bubble Sort</option>
                 <option value="selection">Selection Sort</option>
                 <option value="merge">Merge Sort</option>
                 <option value="insertion">Insertion Sort</option>
                 <option value="quick">Quick Sort</option>
               </optgroup>
-              <optgroup label="🔗 Linked List Operations" className="text-slate-300">
-                <option value="singly_insert_head">Singly - Insert at Head</option>
+              <optgroup
+                label="🔗 Linked List Operations"
+                className="text-slate-300"
+              >
+                <option value="singly_insert_head">
+                  Singly - Insert at Head
+                </option>
               </optgroup>
             </select>
             <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -97,7 +108,9 @@ export default function Sidebar({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Database className="w-4 h-4 text-blue-400" />
-              <label className="text-sm font-semibold text-slate-300">Input Array</label>
+              <label className="text-sm font-semibold text-slate-300">
+                Input Array
+              </label>
             </div>
             <input
               type="text"
@@ -106,7 +119,9 @@ export default function Sidebar({
               placeholder="e.g. 5, 3, 8, 4, 2"
               className="w-full p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-slate-800/70"
             />
-            <p className="text-xs text-slate-500">Separate numbers with commas</p>
+            <p className="text-xs text-slate-500">
+              Separate numbers with commas
+            </p>
           </div>
         )}
 
@@ -114,22 +129,26 @@ export default function Sidebar({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <GitCompare className="w-4 h-4 text-purple-400" />
-            <label className="text-sm font-semibold text-slate-300">Compare Mode</label>
+            <label className="text-sm font-semibold text-slate-300">
+              Compare Mode
+            </label>
           </div>
-          
+
           <div className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-slate-700/30">
             <div className="flex items-center gap-2">
               <span className="text-sm text-slate-300">
-                {compareMode ? "Compare two algorithms" : "Single algorithm mode"}
+                {compareMode
+                  ? "Compare two algorithms"
+                  : "Single algorithm mode"}
               </span>
             </div>
-            
+
             <button
               onClick={() => setCompareMode((prev) => !prev)}
               disabled={isLinkedList}
               className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 disabled:opacity-50 disabled:cursor-not-allowed ${
-                compareMode 
-                  ? "bg-gradient-to-r from-emerald-500 to-green-500 focus:ring-emerald-500" 
+                compareMode
+                  ? "bg-gradient-to-r from-emerald-500 to-green-500 focus:ring-emerald-500"
                   : "bg-slate-600 focus:ring-slate-400"
               }`}
             >
@@ -146,7 +165,7 @@ export default function Sidebar({
               </span>
             </button>
           </div>
-          
+
           {isLinkedList && (
             <p className="text-xs text-amber-400 flex items-center gap-1">
               <Zap className="w-3 h-3" />
@@ -160,9 +179,11 @@ export default function Sidebar({
           <div className="space-y-4 p-4 bg-slate-800/20 rounded-lg border border-slate-700/30">
             <div className="flex items-center gap-2 mb-3">
               <Layers className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-semibold text-slate-300">Algorithm Comparison</span>
+              <span className="text-sm font-semibold text-slate-300">
+                Algorithm Comparison
+              </span>
             </div>
-            
+
             {/* Algorithm 1 */}
             <div className="space-y-2">
               <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">

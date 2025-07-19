@@ -1,13 +1,12 @@
-
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  RotateCcw, 
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  RotateCcw,
   Zap,
-  Clock
-} from 'lucide-react';
+  Clock,
+} from "lucide-react";
 
 export default function Controls({
   stepIndex,
@@ -19,8 +18,8 @@ export default function Controls({
   setSpeed,
   label,
   onReset,
-  isComparePlaying, 
-  isGlobal = false
+  isComparePlaying,
+  isGlobal = false,
 }) {
   function handleReset() {
     setIsPlaying(false);
@@ -28,7 +27,8 @@ export default function Controls({
     if (onReset) onReset();
   }
 
-  const progress = steps.length > 0 ? (stepIndex / (steps.length - 1)) * 100 : 0;
+  const progress =
+    steps.length > 0 ? (stepIndex / (steps.length - 1)) * 100 : 0;
 
   return (
     <div className="flex-1 bg-gradient-to-r from-slate-50 to-slate-100 border-t border-slate-200 shadow-sm mx-1">
@@ -51,7 +51,7 @@ export default function Controls({
               </span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
-              <div 
+              <div
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 h-1.5 rounded-full transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
@@ -68,8 +68,8 @@ export default function Controls({
               onClick={() => setIsPlaying(!isPlaying)}
               disabled={isGlobal && isComparePlaying}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm text-sm ${
-                isPlaying 
-                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600" 
+                isPlaying
+                  ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
                   : "bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600"
               }`}
             >
@@ -134,7 +134,7 @@ export default function Controls({
               <Zap size={14} />
               <span className="text-xs font-medium">Speed:</span>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <input
                 type="range"
@@ -145,7 +145,9 @@ export default function Controls({
                 onChange={(e) => setSpeed(Number(e.target.value))}
                 className="w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
                 style={{
-                  background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${((2000 - speed) / 1900) * 100}%, #e2e8f0 ${((2000 - speed) / 1900) * 100}%, #e2e8f0 100%)`
+                  background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${
+                    ((2000 - speed) / 1900) * 100
+                  }%, #e2e8f0 ${((2000 - speed) / 1900) * 100}%, #e2e8f0 100%)`,
                 }}
               />
               <div className="flex items-center gap-1 min-w-[3rem]">

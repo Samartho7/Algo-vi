@@ -38,7 +38,6 @@ export default function App() {
   const [speed2, setSpeed2] = useState(1000);
   const [isComparePlaying, setIsComparePlaying] = useState(false);
 
-
   const currentStep = steps.length > 0 ? steps[stepIndex] : null;
   // Fix: Change 'lines' to 'line' and provide better fallback
   const highlightedLine = currentStep?.line?.[language] ?? 1;
@@ -91,8 +90,6 @@ export default function App() {
       setSteps(parsed);
     }
   }, [algorithm, algorithm1, algorithm2, inputArray, compareMode]);
-
-  
 
   const resetAnimation = useCallback(
     (step = 0) => {
@@ -163,14 +160,12 @@ export default function App() {
     return () => clearInterval(interval2);
   }, [isPlaying2, stepIndex2, steps2, compareMode, speed2]);
 
-
   useEffect(() => {
-  if (compareMode) {
-    setIsPlaying1(isComparePlaying);
-    setIsPlaying2(isComparePlaying);
-  }
-}, [isComparePlaying, compareMode]);
-
+    if (compareMode) {
+      setIsPlaying1(isComparePlaying);
+      setIsPlaying2(isComparePlaying);
+    }
+  }, [isComparePlaying, compareMode]);
 
   useEffect(() => {
     if (currentStep && currentStep.line) {
