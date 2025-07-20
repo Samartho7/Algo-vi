@@ -165,7 +165,7 @@ export default function Visualizer({ step, algorithm }) {
     );
   }
 
-  // 🧠 Search Visualization (Linear / Binary)
+  // 🧠 Enhanced Search Visualization (Linear / Binary)
   if (algorithm?.includes("search")) {
     return (
       <div className="flex flex-col h-full overflow-hidden bg-gradient-to-br from-slate-50 to-indigo-50">
@@ -175,104 +175,313 @@ export default function Visualizer({ step, algorithm }) {
             🔍 Search Visualization
           </h2>
         </div>
+        {/* Complexity Information */}
+        {(() => {
+          const algorithmType =
+            algorithm === "binary_search" ? "binary" : "linear";
+          const info = complexityInfo[algorithmType];
+          const arraySize = step?.array?.length || 0;
+
+          // Calculate expected iterations
+          let expectedIterations = "N/A";
+          if (algorithmType === "linear") {
+            expectedIterations = `Avg: ${Math.ceil(
+              arraySize / 2
+            )}, Max: ${arraySize}`;
+          } else if (algorithmType === "binary") {
+            expectedIterations = `Max: ${Math.ceil(Math.log2(arraySize))}`;
+          }
+
+          return info ? (
+            <div className="flex-shrink-0 p-4 bg-white border-b border-slate-200">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-slate-700">
+                  {info.name} Complexity
+                </h3>
+                <span className="text-xs text-slate-500">
+                  Array size: {arraySize}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                <div className="bg-green-50 p-2 rounded border border-green-200">
+                  <div className="text-green-600 font-medium mb-1">
+                    Best Case
+                  </div>
+                  <div className="text-green-800 font-bold">{info.best}</div>
+                </div>
+                <div className="bg-yellow-50 p-2 rounded border border-yellow-200">
+                  <div className="text-yellow-600 font-medium mb-1">
+                    Average
+                  </div>
+                  <div className="text-yellow-800 font-bold">
+                    {info.average}
+                  </div>
+                </div>
+                <div className="bg-red-50 p-2 rounded border border-red-200">
+                  <div className="text-red-600 font-medium mb-1">
+                    Worst Case
+                  </div>
+                  <div className="text-red-800 font-bold">{info.worst}</div>
+                </div>
+                <div className="bg-slate-50 p-2 rounded border border-slate-200">
+                  <div className="text-slate-600 font-medium mb-1">
+                    Expected
+                  </div>
+                  <div className="text-slate-800 font-bold">
+                    {expectedIterations}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null;
+        })()}
 
         {/* Main Container */}
         <div className="flex-1 p-4 overflow-hidden">
           <div className="h-full p-4 bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col">
-            <div className="flex-1 flex gap-2 justify-center items-end py-4">
+            {/* Bars Container */}
+            <div className="flex-1 flex gap-2 justify-center items-end py-4 min-h-0">
               <AnimatePresence>
                 {step?.array?.map(({ id, value }, i) => {
                   const isCompared =
                     step.indices?.includes(i) && step.action === "compare";
                   const isFound =
                     step.indices?.includes(i) && step.action === "found";
-                  const isLeft =
-                    step.indices?.includes(i) && step.action === "left";
-                  const isRight =
-                    step.indices?.includes(i) && step.action === "right";
+                  const isShiftLeft =
+                    step.indices?.includes(i) && step.action === "shiftLeft";
+                  const isShiftRight =
+                    step.indices?.includes(i) && step.action === "shiftRight";
+                  const isActive = step.indices?.includes(i);
+                  const isNotFound = step.action === "notFound";
 
-                  let bgColor = "bg-slate-400";
-                  if (isFound) bgColor = "bg-green-500";
-                  else if (isCompared) bgColor = "bg-yellow-400";
-                  else if (isLeft || isRight) bgColor = "bg-blue-400";
+                  // Enhanced color scheme with gradients
+                  let bgColor = "bg-gradient-to-t from-slate-700 to-slate-800";
+                  let textColor = "text-white";
+                  let borderColor = "border-slate-600";
+                  let shadowColor = "shadow-slate-400/30";
+
+                  if (isFound) {
+                    bgColor = "bg-gradient-to-t from-green-600 to-green-500";
+                    shadowColor = "shadow-green-400/50";
+                    borderColor = "border-green-500";
+                  } else if (isCompared) {
+                    bgColor = "bg-gradient-to-t from-yellow-500 to-yellow-400";
+                    textColor = "text-yellow-900";
+                    shadowColor = "shadow-yellow-400/50";
+                    borderColor = "border-yellow-400";
+                  } else if (isShiftLeft) {
+                    bgColor = "bg-gradient-to-t from-blue-500 to-blue-400";
+                    textColor = "text-white";
+                    shadowColor = "shadow-blue-400/50";
+                    borderColor = "border-blue-400";
+                  } else if (isShiftRight) {
+                    bgColor = "bg-gradient-to-t from-purple-500 to-purple-400";
+                    textColor = "text-white";
+                    shadowColor = "shadow-purple-400/50";
+                    borderColor = "border-purple-400";
+                  } else if (isNotFound) {
+                    // Dim all bars when not found
+                    bgColor = "bg-gradient-to-t from-red-300 to-red-200";
+                    textColor = "text-red-700";
+                    shadowColor = "shadow-red-200/30";
+                    borderColor = "border-red-300";
+                  } else if (
+                    step.action === "done" &&
+                    step.message?.includes("not found")
+                  ) {
+                    // Final state for not found
+                    bgColor = "bg-gradient-to-t from-slate-500 to-slate-400";
+                    textColor = "text-slate-200";
+                    shadowColor = "shadow-slate-400/30";
+                    borderColor = "border-slate-500";
+                  }
+
+                  // Dynamic bar sizing
+                  const maxHeight = 140;
+                  const minHeight = 40;
+                  const height = Math.min(
+                    Math.max(value * 3 + minHeight, minHeight),
+                    maxHeight
+                  );
 
                   return (
                     <motion.div
                       key={id}
+                      layout
                       initial={{ scale: 0.8, y: 20, opacity: 0 }}
-                      animate={{ scale: 1, y: 0, opacity: 1 }}
+                      animate={{
+                        scale: isActive ? 1.08 : isNotFound ? 0.95 : 1,
+                        y: 0,
+                        opacity: isNotFound ? 0.6 : 1,
+                        rotateX: isFound ? 5 : 0,
+                      }}
                       exit={{ scale: 0.8, opacity: 0, y: 20 }}
-                      transition={{ duration: 0.3 }}
-                      className={`w-10 h-[${
-                        value * 3 + 30
-                      }px] flex items-center justify-center rounded-md font-bold border border-slate-500 text-white ${bgColor}`}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 25,
+                        duration: 0.4,
+                      }}
+                      className={`w-12 flex items-center justify-center rounded-lg font-bold border-2 transition-all duration-300 ${bgColor} ${textColor} ${borderColor} shadow-lg ${shadowColor}`}
+                      style={{ height: `${height}px` }}
                     >
-                      {value}
+                      <span className="text-sm font-bold drop-shadow-sm select-none">
+                        {value}
+                      </span>
                     </motion.div>
                   );
                 })}
               </AnimatePresence>
             </div>
 
-            {/* Step Info */}
-            <div className="flex-shrink-0 p-3 bg-slate-50 rounded-md border border-slate-200">
-              {step && (
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>
-                      <strong>Action:</strong> {step.action}
-                    </span>
+            {/* Enhanced Status Display */}
+            <div className="flex-shrink-0 space-y-3">
+              {/* Current Step Info */}
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                {step && (
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 rounded-full ${
+                          step.action === "found"
+                            ? "bg-green-500"
+                            : step.action === "compare"
+                            ? "bg-yellow-500"
+                            : step.action === "shiftLeft"
+                            ? "bg-blue-500"
+                            : step.action === "shiftRight"
+                            ? "bg-purple-500"
+                            : step.action === "notFound"
+                            ? "bg-red-500"
+                            : "bg-slate-500"
+                        }`}
+                      ></div>
+                      <span>
+                        <strong>Action:</strong>{" "}
+                        {step.action === "notFound"
+                          ? "Not Found"
+                          : step.action === "shiftLeft"
+                          ? "Search Left"
+                          : step.action === "shiftRight"
+                          ? "Search Right"
+                          : step.action.charAt(0).toUpperCase() +
+                            step.action.slice(1)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                      <span>
+                        <strong>Indices:</strong>{" "}
+                        {step.indices?.length > 0
+                          ? step.indices.join(", ")
+                          : "None"}
+                      </span>
+                    </div>
                   </div>
+                )}
+              </div>
+
+              {/* Message Display with Enhanced Styling */}
+              {step?.message && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`p-3 rounded-lg border-l-4 ${
+                    step.action === "found"
+                      ? "bg-green-50 border-green-400 text-green-800"
+                      : step.action === "notFound"
+                      ? "bg-red-50 border-red-400 text-red-800"
+                      : step.action === "compare"
+                      ? "bg-yellow-50 border-yellow-400 text-yellow-800"
+                      : step.action === "shiftLeft" ||
+                        step.action === "shiftRight"
+                      ? "bg-blue-50 border-blue-400 text-blue-800"
+                      : "bg-slate-50 border-slate-400 text-slate-800"
+                  }`}
+                >
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <span>
-                      <strong>Indices:</strong>{" "}
-                      {step.indices?.join(", ") || "None"}
+                    <span className="text-lg">
+                      {step.action === "found"
+                        ? "🎉"
+                        : step.action === "notFound"
+                        ? "❌"
+                        : step.action === "compare"
+                        ? "🔍"
+                        : step.action === "shiftLeft"
+                        ? "⬅️"
+                        : step.action === "shiftRight"
+                        ? "➡️"
+                        : "ℹ️"}
                     </span>
+                    <span className="text-sm font-medium">{step.message}</span>
                   </div>
-                </div>
+                </motion.div>
               )}
+
+              {/* Binary Search Range Indicator */}
+              {algorithm === "binary_search" &&
+                step?.low !== undefined &&
+                step?.high !== undefined && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="p-3 bg-indigo-50 rounded-lg border border-indigo-200"
+                  >
+                    <div className="flex items-center justify-between text-sm text-indigo-800">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+                        <span>
+                          <strong>Search Range:</strong>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span>
+                          Low: <strong>{step.low}</strong>
+                        </span>
+                        {step.mid !== undefined && (
+                          <span>
+                            Mid: <strong>{step.mid}</strong>
+                          </span>
+                        )}
+                        <span>
+                          High: <strong>{step.high}</strong>
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
             </div>
           </div>
         </div>
 
-        {/* Complexity Info */}
+        {/* Enhanced Legend */}
         <div className="flex-shrink-0 p-4 bg-white border-t border-slate-200">
-          {algorithm && complexityInfo[algorithm] && (
-            <div className="space-y-2">
-              <h3 className="font-semibold text-sm text-slate-800 flex items-center gap-2">
-                📈 {complexityInfo[algorithm].name}
-              </h3>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>
-                    <strong>Best:</strong> {complexityInfo[algorithm].best}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                  <span>
-                    <strong>Worst:</strong> {complexityInfo[algorithm].worst}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span>
-                    <strong>Average:</strong>{" "}
-                    {complexityInfo[algorithm].average}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>
-                    <strong>Space:</strong> {complexityInfo[algorithm].space}
-                  </span>
-                </div>
-              </div>
+          <div className="flex flex-wrap items-center gap-4 text-xs text-slate-600">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-slate-700 to-slate-800 rounded"></div>
+              <span>Unvisited</span>
             </div>
-          )}
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-yellow-500 to-yellow-400 rounded"></div>
+              <span>Comparing</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-blue-400 rounded"></div>
+              <span>Search Left</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-purple-500 to-purple-400 rounded"></div>
+              <span>Search Right</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-green-600 to-green-500 rounded"></div>
+              <span>Found</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-gradient-to-r from-red-300 to-red-200 rounded border border-red-300"></div>
+              <span>Not Found</span>
+            </div>
+          </div>
         </div>
       </div>
     );

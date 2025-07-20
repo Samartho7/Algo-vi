@@ -11,6 +11,8 @@ import {
   parseInsertionSort,
   parseQuickSort,
   parseSinglyInsertHead,
+  parseLinearSearch,
+  parseBinarySearch,
 } from "./utils/parseAlgorithms";
 import codeTemplates from "./utils/codeTemplates";
 
@@ -37,6 +39,7 @@ export default function App() {
   const [speed1, setSpeed1] = useState(1000);
   const [speed2, setSpeed2] = useState(1000);
   const [isComparePlaying, setIsComparePlaying] = useState(false);
+  const [searchTarget, setSearchTarget] = useState(null); // default target value
 
   const currentStep = steps.length > 0 ? steps[stepIndex] : null;
   // Fix: Change 'lines' to 'line' and provide better fallback
@@ -78,18 +81,52 @@ export default function App() {
       insertion: parseInsertionSort,
       quick: parseQuickSort,
       singly_insert_head: parseSinglyInsertHead,
+      linear_search: parseLinearSearch,
+      binary_search: parseBinarySearch,
     };
 
-    if (compareMode) {
-      const parsed1 = parseMap[algorithm1](inputArray);
-      const parsed2 = parseMap[algorithm2](inputArray);
-      setSteps1(parsed1);
-      setSteps2(parsed2);
+    let parsed1 = [],
+      parsed2 = [],
+      parsed = [];
+
+    if (["linear_search", "binary_search"].includes(algorithm1)) {
+      parsed1 =
+        searchTarget != null
+          ? parseMap[algorithm1](inputArray, searchTarget)
+          : [];
     } else {
-      const parsed = parseMap[algorithm](inputArray);
-      setSteps(parsed);
+      parsed1 = parseMap[algorithm1](inputArray);
     }
-  }, [algorithm, algorithm1, algorithm2, inputArray, compareMode]);
+
+    if (["linear_search", "binary_search"].includes(algorithm2)) {
+      parsed2 =
+        searchTarget != null
+          ? parseMap[algorithm2](inputArray, searchTarget)
+          : [];
+    } else {
+      parsed2 = parseMap[algorithm2](inputArray);
+    }
+
+    if (["linear_search", "binary_search"].includes(algorithm)) {
+      parsed =
+        searchTarget != null
+          ? parseMap[algorithm](inputArray, searchTarget)
+          : [];
+    } else {
+      parsed = parseMap[algorithm](inputArray);
+    }
+
+    setSteps(parsed);
+    setSteps1(parsed1);
+    setSteps2(parsed2);
+  }, [
+    algorithm,
+    algorithm1,
+    algorithm2,
+    inputArray,
+    compareMode,
+    searchTarget,
+  ]);
 
   const resetAnimation = useCallback(
     (step = 0) => {
@@ -193,6 +230,8 @@ export default function App() {
         setAlgorithm1={setAlgorithm1}
         algorithm2={algorithm2}
         setAlgorithm2={setAlgorithm2}
+        searchTarget={searchTarget}
+        setSearchTarget={setSearchTarget}
       />
       <div className="flex flex-col flex-1 min-w-0">
         <Topbar />

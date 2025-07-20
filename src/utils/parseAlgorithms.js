@@ -325,12 +325,26 @@ function buildSnapshot(head) {
   return nodes;
 }
 
+// Enhanced Linear Search with better "not found" handling
 export function parseLinearSearch(inputArr = [], target) {
+  if (target == null) return [];
+
   const arr = inputArr.map((item, index) => ({
     id: index,
     value: item.value ?? item,
   }));
+
   const steps = [];
+  let found = false;
+
+  // Initial step
+  steps.push({
+    action: "initialize",
+    indices: [],
+    array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+    line: { c: 1, cpp: 1, java: 1 },
+    message: `Starting linear search for target ${target} in array of ${arr.length} elements`,
+  });
 
   for (let i = 0; i < arr.length; i++) {
     steps.push({
@@ -338,6 +352,7 @@ export function parseLinearSearch(inputArr = [], target) {
       indices: [i],
       array: arr.map((item, idx) => ({ id: idx, value: item.value })),
       line: { c: 6, cpp: 6, java: 5 },
+      message: `Comparing element at index ${i} (value: ${arr[i].value}) with target ${target}`,
     });
 
     if (arr[i].value === target) {
@@ -346,22 +361,43 @@ export function parseLinearSearch(inputArr = [], target) {
         indices: [i],
         array: arr.map((item, idx) => ({ id: idx, value: item.value })),
         line: { c: 8, cpp: 8, java: 7 },
+        message: `🎉 Target ${target} found at index ${i}! Search completed successfully.`,
       });
+      found = true;
       break;
     }
   }
 
+  // Enhanced "not found" handling
+  if (!found) {
+    // First show all elements as "searched through"
+    steps.push({
+      action: "notFound",
+      indices: [],
+      array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+      line: { c: 12, cpp: 12, java: 11 },
+      message: `❌ Searched through all ${arr.length} elements - target ${target} not found in the array`,
+    });
+  }
+
+  // Final step
   steps.push({
     action: "done",
     indices: [],
     array: arr.map((item, idx) => ({ id: idx, value: item.value })),
     line: { c: 1, cpp: 1, java: 1 },
+    message: found
+      ? `Linear search completed: target ${target} found`
+      : `Linear search completed: target ${target} not found`,
   });
 
   return steps;
 }
 
+// Enhanced Binary Search with better "not found" handling and range visualization
 export function parseBinarySearch(inputArr = [], target) {
+  if (target == null) return [];
+
   const arr = [...inputArr]
     .map((item, index) => ({
       id: index,
@@ -372,14 +408,33 @@ export function parseBinarySearch(inputArr = [], target) {
   const steps = [];
   let low = 0,
     high = arr.length - 1;
+  let found = false;
+  let iterationCount = 0;
+
+  // Add initial step showing sorted array
+  steps.push({
+    action: "initialize",
+    indices: [],
+    array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+    low: low,
+    high: high,
+    line: { c: 1, cpp: 1, java: 1 },
+    message: `Array sorted for binary search. Searching for ${target} in range [${low}, ${high}]`,
+  });
 
   while (low <= high) {
+    iterationCount++;
     let mid = Math.floor((low + high) / 2);
+
     steps.push({
       action: "compare",
       indices: [mid],
       array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+      low: low,
+      high: high,
+      mid: mid,
       line: { c: 7, cpp: 7, java: 6 },
+      message: `Iteration ${iterationCount}: Checking middle element at index ${mid} (value: ${arr[mid].value}) vs target ${target}`,
     });
 
     if (arr[mid].value === target) {
@@ -387,15 +442,28 @@ export function parseBinarySearch(inputArr = [], target) {
         action: "found",
         indices: [mid],
         array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        low: low,
+        high: high,
+        mid: mid,
         line: { c: 9, cpp: 9, java: 8 },
+        message: `🎉 Target ${target} found at index ${mid} after ${iterationCount} iterations!`,
       });
+      found = true;
       break;
     } else if (arr[mid].value < target) {
       steps.push({
         action: "shiftRight",
         indices: [mid],
         array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        low: low,
+        high: high,
+        mid: mid,
         line: { c: 11, cpp: 11, java: 10 },
+        message: `${
+          arr[mid].value
+        } < ${target}: Target is in the right half. New range: [${
+          mid + 1
+        }, ${high}]`,
       });
       low = mid + 1;
     } else {
@@ -403,17 +471,43 @@ export function parseBinarySearch(inputArr = [], target) {
         action: "shiftLeft",
         indices: [mid],
         array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+        low: low,
+        high: high,
+        mid: mid,
         line: { c: 13, cpp: 13, java: 12 },
+        message: `${
+          arr[mid].value
+        } > ${target}: Target is in the left half. New range: [${low}, ${
+          mid - 1
+        }]`,
       });
       high = mid - 1;
     }
   }
 
+  // Enhanced "not found" handling
+  if (!found) {
+    steps.push({
+      action: "notFound",
+      indices: [],
+      array: arr.map((item, idx) => ({ id: idx, value: item.value })),
+      low: low,
+      high: high,
+      line: { c: 16, cpp: 16, java: 15 },
+      message: `❌ Search space exhausted after ${iterationCount} iterations. Target ${target} not found (low ${low} > high ${high})`,
+    });
+  }
+
+  // Final step
   steps.push({
     action: "done",
     indices: [],
     array: arr.map((item, idx) => ({ id: idx, value: item.value })),
-    line: { c: 1, cpp: 1, java: 1 },
+    low: low,
+    high: high,
+    message: found
+      ? `Binary search completed: target ${target} found in ${iterationCount} iterations`
+      : `Binary search completed: target ${target} not found after ${iterationCount} iterations`,
   });
 
   return steps;

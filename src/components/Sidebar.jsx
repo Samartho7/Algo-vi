@@ -23,8 +23,11 @@ export default function Sidebar({
   setAlgorithm1,
   algorithm2,
   setAlgorithm2,
+  searchTarget,
+  setSearchTarget,
 }) {
   const isLinkedList = algorithm?.startsWith("singly");
+  const isSearchAlgorithm = algorithm?.includes("search");
 
   return (
     <div className="w-80 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
@@ -90,6 +93,11 @@ export default function Sidebar({
                 <option value="insertion">Insertion Sort</option>
                 <option value="quick">Quick Sort</option>
               </optgroup>
+              <optgroup label="🔍 Search Algorithms" className="text-slate-300">
+                <option value="linear_search">Linear Search</option>
+                <option value="binary_search">Binary Search</option>
+              </optgroup>
+
               <optgroup
                 label="🔗 Linked List Operations"
                 className="text-slate-300"
@@ -103,7 +111,7 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Input Array (only for sorting) */}
+        {/* Input Array (only for sorting and search algorithms, not linked lists) */}
         {!isLinkedList && (
           <div className="space-y-3">
             <div className="flex items-center gap-2">
@@ -122,6 +130,98 @@ export default function Sidebar({
             <p className="text-xs text-slate-500">
               Separate numbers with commas
             </p>
+          </div>
+        )}
+
+        {/* Search Target Input - Only show for search algorithms */}
+        {!isLinkedList && isSearchAlgorithm && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-md">
+                <Binary className="w-4 h-4 text-pink-400" />
+              </div>
+              <label className="text-sm font-semibold text-slate-300">
+                Search Target
+              </label>
+              <div className="ml-auto">
+                <span className="px-2 py-1 text-xs font-medium bg-pink-500/10 text-pink-300 rounded-full border border-pink-500/20">
+                  Required
+                </span>
+              </div>
+            </div>
+
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-purple-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+              <div className="relative">
+                <input
+                  type="number"
+                  value={searchTarget || ""}
+                  onChange={(e) =>
+                    setSearchTarget(
+                      e.target.value ? Number(e.target.value) : null
+                    )
+                  }
+                  placeholder="Enter target value..."
+                  className="w-full p-3 rounded-lg bg-slate-800/70 border border-slate-700/50 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500/50 transition-all duration-200 hover:bg-slate-800/90 hover:border-slate-600/70 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                  <div className="flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-pink-400 rounded-full animate-pulse"></div>
+                    <div
+                      className="w-1 h-1 bg-pink-300 rounded-full animate-pulse"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
+                    <div
+                      className="w-0.5 h-0.5 bg-pink-200 rounded-full animate-pulse"
+                      style={{ animationDelay: "0.4s" }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-slate-500 flex items-center gap-1.5">
+                <span className="w-1 h-1 bg-slate-500 rounded-full"></span>
+                Value to search for in the array
+              </p>
+              {searchTarget !== null && searchTarget !== "" && (
+                <div className="flex items-center gap-1.5 text-xs">
+                  <span className="text-emerald-400 font-medium">Target:</span>
+                  <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-300 rounded border border-emerald-500/20 font-mono">
+                    {searchTarget}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Quick target suggestions */}
+            <div className="flex items-center gap-2 pt-1">
+              <span className="text-xs text-slate-400">Quick select:</span>
+              <div className="flex gap-1 flex-wrap">
+                {inputArrayStr
+                  .split(",")
+                  .slice(0, 4)
+                  .map((num, i) => {
+                    const value = parseInt(num.trim());
+                    if (isNaN(value)) return null;
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => setSearchTarget(value)}
+                        className={`px-2 py-0.5 text-xs rounded border transition-all duration-200 hover:scale-105 ${
+                          searchTarget === value
+                            ? "bg-pink-500/20 text-pink-300 border-pink-500/30"
+                            : "bg-slate-700/50 text-slate-400 border-slate-600/50 hover:bg-slate-700/70 hover:text-slate-300"
+                        }`}
+                      >
+                        {value}
+                      </button>
+                    );
+                  })
+                  .filter(Boolean)}
+              </div>
+            </div>
           </div>
         )}
 
@@ -174,7 +274,7 @@ export default function Sidebar({
           )}
         </div>
 
-        {/* Algorithm Comparison Selectors */}
+        {/* Algorithm Comparison Selectors - Exclude search algorithms */}
         {compareMode && !isLinkedList && (
           <div className="space-y-4 p-4 bg-slate-800/20 rounded-lg border border-slate-700/30">
             <div className="flex items-center gap-2 mb-3">
