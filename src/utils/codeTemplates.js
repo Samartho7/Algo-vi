@@ -576,7 +576,42 @@ int main() {
   return 0;
 }`,
 
-    java: `// Not implemented for now — Only C/C++ supported for Linked List`,
+    java: `class Node {
+    int data;
+    Node next;
+    
+    Node(int data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+
+public class SinglyLinkedList {
+    
+    public static Node insertAtHead(Node head, int data) {
+        Node newNode = new Node(data);
+        newNode.next = head;
+        return newNode;
+    }
+    
+    public static void printList(Node head) {
+        Node temp = head;
+        while (temp != null) {
+            System.out.print(temp.data + " -> ");
+            temp = temp.next;
+        }
+        System.out.println("NULL");
+    }
+    
+    public static void main(String[] args) {
+        Node head = null;
+        head = insertAtHead(head, 3);
+        head = insertAtHead(head, 5);
+        head = insertAtHead(head, 7);
+        
+        printList(head);
+    }
+}`,
   },
 };
 export default codeTemplates;
