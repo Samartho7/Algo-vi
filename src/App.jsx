@@ -15,6 +15,7 @@ import {
   parseBinarySearch,
 } from "./utils/parseAlgorithms";
 import codeTemplates from "./utils/codeTemplates";
+import { Menu, X } from "lucide-react";
 
 export default function App() {
   const [language, setLanguage] = useState("cpp");
@@ -40,6 +41,7 @@ export default function App() {
   const [speed2, setSpeed2] = useState(1000);
   const [isComparePlaying, setIsComparePlaying] = useState(false);
   const [searchTarget, setSearchTarget] = useState(null); // default target value
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const currentStep = steps.length > 0 ? steps[stepIndex] : null;
   // Fix: Change 'lines' to 'line' and provide better fallback
@@ -217,6 +219,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen bg-gray-100 text-gray-900">
+      {/* Sidebar - responsive */}
       <Sidebar
         language={language}
         setLanguage={setLanguage}
@@ -232,15 +235,35 @@ export default function App() {
         setAlgorithm2={setAlgorithm2}
         searchTarget={searchTarget}
         setSearchTarget={setSearchTarget}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
-      <div className="flex flex-col flex-1 min-w-0">
+
+      {/* Main Content Area */}
+      <div className="flex flex-col flex-1 min-w-0 lg:ml-0">
+        {/* Mobile Header with Menu Button */}
+        <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <Menu className="w-6 h-6 text-gray-600" />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900">
+            Algorithm Visualizer
+          </h1>
+          <div className="w-10" /> {/* Spacer for centering */}
+        </div>
+
         <Topbar />
+
+        {/* Content Area - responsive layout */}
         <div className="flex flex-1 overflow-hidden">
           {compareMode ? (
-            <>
+            <div className="flex flex-col lg:flex-row w-full min-h-0 overflow-y-auto lg:overflow-y-hidden">
               {/* First Algorithm Section */}
-              <div className="flex flex-1 min-w-0">
-                <div className="w-1/2 min-w-0">
+              <div className="flex flex-1 min-w-0 flex-col md:flex-row lg:min-h-0">
+                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
                   <CodeEditor
                     code={codeTemplates[algorithm1][language]}
                     setCode={setCode}
@@ -248,9 +271,8 @@ export default function App() {
                     highlightedLine={steps1[stepIndex1]?.line?.[language] ?? 1}
                   />
                 </div>
-                <div className="w-1/2 min-w-0">
+                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
                   <Visualizer
-                    // key={`algo1-${algorithm1}-${stepIndex1}`}
                     step={steps1[stepIndex1]}
                     stepIndex={stepIndex1}
                     algorithm={algorithm1}
@@ -258,12 +280,13 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Divider */}
-              <div className="w-px bg-gray-300 flex-shrink-0"></div>
+              {/* Divider - responsive */}
+              <div className="hidden lg:block w-px bg-gray-300 flex-shrink-0 mx-1"></div>
+              <div className="block lg:hidden h-px bg-gray-300 flex-shrink-0 my-2"></div>
 
               {/* Second Algorithm Section */}
-              <div className="flex flex-1 min-w-0">
-                <div className="w-1/2 min-w-0">
+              <div className="flex flex-1 min-w-0 flex-col md:flex-row lg:min-h-0">
+                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
                   <CodeEditor
                     code={codeTemplates[algorithm2][language]}
                     setCode={setCode}
@@ -271,19 +294,18 @@ export default function App() {
                     highlightedLine={steps2[stepIndex2]?.line?.[language] ?? 1}
                   />
                 </div>
-                <div className="w-1/2 min-w-0">
+                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
                   <Visualizer
-                    // key={`algo2-${algorithm2}-${stepIndex2}`}
                     step={steps2[stepIndex2]}
                     stepIndex={stepIndex2}
                     algorithm={algorithm2}
                   />
                 </div>
               </div>
-            </>
+            </div>
           ) : (
-            <>
-              <div className="w-1/2 min-w-0">
+            <div className="flex flex-col lg:flex-row w-full">
+              <div className="w-full lg:w-1/2 min-w-0 h-64 lg:h-auto">
                 <CodeEditor
                   code={code}
                   setCode={setCode}
@@ -291,72 +313,82 @@ export default function App() {
                   highlightedLine={highlightedLine}
                 />
               </div>
-              <div className="w-1/2 min-w-0">
+              <div className="w-full lg:w-1/2 min-w-0 h-64 lg:h-auto">
                 <Visualizer
                   step={steps[stepIndex]}
                   algorithm={algorithm}
                   stepIndex={stepIndex}
-                  // key={`single-${algorithm}-${stepIndex}`}
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
+
+        {/* Controls Section - responsive */}
         {compareMode ? (
-          <>
-            <div className="flex items-stretch py-2 gap-2 bg-gray-200 flex-shrink-0 px-2">
-              <Controls
-                stepIndex={stepIndex1}
-                setStepIndex={setStepIndex1}
-                steps={steps1}
-                isPlaying={isPlaying1}
-                setIsPlaying={setIsPlaying1}
-                speed={speed1}
-                setSpeed={setSpeed1}
-                label={`Algorithm 1: ${algorithm1}`}
-                onReset={() => {
-                  setStepIndex1(0);
-                  setIsPlaying1(false);
-                }}
-                isComparePlaying={isComparePlaying}
-              />
-              <Controls
-                stepIndex={stepIndex2}
-                setStepIndex={setStepIndex2}
-                steps={steps2}
-                isPlaying={isPlaying2}
-                setIsPlaying={setIsPlaying2}
-                speed={speed2}
-                setSpeed={setSpeed2}
-                label={`Algorithm 2: ${algorithm2}`}
-                onReset={() => {
-                  setStepIndex2(0);
-                  setIsPlaying2(false);
-                }}
-                isComparePlaying={isComparePlaying}
-              />
+          <div className="flex-shrink-0 bg-gray-200">
+            {/* Individual Algorithm Controls */}
+            <div className="flex flex-col md:flex-row items-stretch py-2 gap-2 px-2">
+              <div className="flex-1">
+                <Controls
+                  stepIndex={stepIndex1}
+                  setStepIndex={setStepIndex1}
+                  steps={steps1}
+                  isPlaying={isPlaying1}
+                  setIsPlaying={setIsPlaying1}
+                  speed={speed1}
+                  setSpeed={setSpeed1}
+                  label={`Algorithm 1: ${algorithm1}`}
+                  onReset={() => {
+                    setStepIndex1(0);
+                    setIsPlaying1(false);
+                  }}
+                  isComparePlaying={isComparePlaying}
+                />
+              </div>
+              <div className="flex-1">
+                <Controls
+                  stepIndex={stepIndex2}
+                  setStepIndex={setStepIndex2}
+                  steps={steps2}
+                  isPlaying={isPlaying2}
+                  setIsPlaying={setIsPlaying2}
+                  speed={speed2}
+                  setSpeed={setSpeed2}
+                  label={`Algorithm 2: ${algorithm2}`}
+                  onReset={() => {
+                    setStepIndex2(0);
+                    setIsPlaying2(false);
+                  }}
+                  isComparePlaying={isComparePlaying}
+                />
+              </div>
             </div>
+
+            {/* Global Control */}
             <div className="w-full flex justify-center px-4 pb-4">
-              <Controls
-                label="Global Control"
-                isPlaying={isComparePlaying}
-                setIsPlaying={setIsComparePlaying}
-                steps={[]}
-                stepIndex={0}
-                setStepIndex={() => {}}
-                onReset={resetAnimation}
-                speed={Math.min(speed1, speed2)}
-                setSpeed={(val) => {
-                  setSpeed1(val);
-                  setSpeed2(val);
-                }}
-                isComparePlaying={false}
-                isGlobal={true}
-              />
+              <div className="w-full max-w-md">
+                <Controls
+                  label="Global Control"
+                  isPlaying={isComparePlaying}
+                  setIsPlaying={setIsComparePlaying}
+                  steps={[]}
+                  stepIndex={0}
+                  setStepIndex={() => {}}
+                  onReset={resetAnimation}
+                  speed={Math.min(speed1, speed2)}
+                  setSpeed={(val) => {
+                    setSpeed1(val);
+                    setSpeed2(val);
+                  }}
+                  isComparePlaying={false}
+                  isGlobal={true}
+                />
+              </div>
             </div>
-          </>
+          </div>
         ) : (
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 px-2 py-2">
             <Controls
               stepIndex={stepIndex}
               setStepIndex={setStepIndex}
