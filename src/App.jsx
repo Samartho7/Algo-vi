@@ -42,6 +42,9 @@ export default function App() {
   const [isComparePlaying, setIsComparePlaying] = useState(false);
   const [searchTarget, setSearchTarget] = useState(null); // default target value
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("visualization");
+  const [activeTab1, setActiveTab1] = useState("visualization");
+  const [activeTab2, setActiveTab2] = useState("visualization");
 
   const currentStep = steps.length > 0 ? steps[stepIndex] : null;
   // Fix: Change 'lines' to 'line' and provide better fallback
@@ -262,8 +265,53 @@ export default function App() {
           {compareMode ? (
             <div className="flex flex-col lg:flex-row w-full min-h-0 overflow-y-auto lg:overflow-y-hidden">
               {/* First Algorithm Section */}
-              <div className="flex flex-1 min-w-0 flex-col md:flex-row lg:min-h-0">
-                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
+              <div className="flex flex-1 min-w-0 flex-col lg:min-h-0 lg:flex-row">
+                {/* Mobile: Tabbed Interface */}
+                <div className="lg:hidden w-full flex flex-col h-96">
+                  <div className="flex border-b border-gray-200 bg-white">
+                    <button
+                      onClick={() => setActiveTab1("visualization")}
+                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                        activeTab1 === "visualization"
+                          ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                          : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                      }`}
+                    >
+                      📊 Visualization
+                    </button>
+                    <button
+                      onClick={() => setActiveTab1("code")}
+                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                        activeTab1 === "code"
+                          ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                          : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                      }`}
+                    >
+                      💻 Code
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    {activeTab1 === "code" ? (
+                      <CodeEditor
+                        code={codeTemplates[algorithm1][language]}
+                        setCode={setCode}
+                        language={language}
+                        highlightedLine={
+                          steps1[stepIndex1]?.line?.[language] ?? 1
+                        }
+                      />
+                    ) : (
+                      <Visualizer
+                        step={steps1[stepIndex1]}
+                        stepIndex={stepIndex1}
+                        algorithm={algorithm1}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Desktop: Side by Side */}
+                <div className="hidden lg:block lg:w-1/2 min-w-0 lg:h-auto">
                   <CodeEditor
                     code={codeTemplates[algorithm1][language]}
                     setCode={setCode}
@@ -271,7 +319,7 @@ export default function App() {
                     highlightedLine={steps1[stepIndex1]?.line?.[language] ?? 1}
                   />
                 </div>
-                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
+                <div className="hidden lg:block lg:w-1/2 min-w-0 lg:h-auto">
                   <Visualizer
                     step={steps1[stepIndex1]}
                     stepIndex={stepIndex1}
@@ -280,13 +328,57 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Divider - responsive */}
               <div className="hidden lg:block w-px bg-gray-300 flex-shrink-0 mx-1"></div>
               <div className="block lg:hidden h-px bg-gray-300 flex-shrink-0 my-2"></div>
 
               {/* Second Algorithm Section */}
-              <div className="flex flex-1 min-w-0 flex-col md:flex-row lg:min-h-0">
-                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
+              <div className="flex flex-1 min-w-0 flex-col lg:min-h-0 lg:flex-row">
+                {/* Mobile: Tabbed Interface */}
+                <div className="lg:hidden w-full flex flex-col h-96">
+                  <div className="flex border-b border-gray-200 bg-white">
+                    <button
+                      onClick={() => setActiveTab2("visualization")}
+                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                        activeTab2 === "visualization"
+                          ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                          : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                      }`}
+                    >
+                      📊 Visualization
+                    </button>
+                    <button
+                      onClick={() => setActiveTab2("code")}
+                      className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                        activeTab2 === "code"
+                          ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                          : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                      }`}
+                    >
+                      💻 Code
+                    </button>
+                  </div>
+                  <div className="flex-1 overflow-hidden">
+                    {activeTab2 === "code" ? (
+                      <CodeEditor
+                        code={codeTemplates[algorithm2][language]}
+                        setCode={setCode}
+                        language={language}
+                        highlightedLine={
+                          steps2[stepIndex2]?.line?.[language] ?? 1
+                        }
+                      />
+                    ) : (
+                      <Visualizer
+                        step={steps2[stepIndex2]}
+                        stepIndex={stepIndex2}
+                        algorithm={algorithm2}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Desktop: Side by Side */}
+                <div className="hidden lg:block lg:w-1/2 min-w-0 lg:h-auto">
                   <CodeEditor
                     code={codeTemplates[algorithm2][language]}
                     setCode={setCode}
@@ -294,7 +386,7 @@ export default function App() {
                     highlightedLine={steps2[stepIndex2]?.line?.[language] ?? 1}
                   />
                 </div>
-                <div className="w-full md:w-1/2 min-w-0 h-40 sm:h-48 md:h-auto">
+                <div className="hidden lg:block lg:w-1/2 min-w-0 lg:h-auto">
                   <Visualizer
                     step={steps2[stepIndex2]}
                     stepIndex={stepIndex2}
@@ -304,21 +396,67 @@ export default function App() {
               </div>
             </div>
           ) : (
-            <div className="flex flex-col lg:flex-row w-full">
-              <div className="w-full lg:w-1/2 min-w-0 h-64 lg:h-auto">
-                <CodeEditor
-                  code={code}
-                  setCode={setCode}
-                  language={language}
-                  highlightedLine={highlightedLine}
-                />
+            <div className="flex w-full h-full overflow-hidden">
+              {/* Mobile: Tabbed Interface */}
+              <div className="lg:hidden w-full flex flex-col flex-1 h-full">
+                <div className="flex border-b border-gray-200 bg-white flex-shrink-0">
+                  <button
+                    onClick={() => setActiveTab("visualization")}
+                    className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                      activeTab === "visualization"
+                        ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                    }`}
+                  >
+                    📊 Visualization
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("code")}
+                    className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
+                      activeTab === "code"
+                        ? "border-b-2 border-blue-500 text-blue-600 bg-blue-50"
+                        : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
+                    }`}
+                  >
+                    💻 Code
+                  </button>
+                </div>
+
+                <div className="flex-1 overflow-hidden h-full">
+                  {activeTab === "code" ? (
+                    <CodeEditor
+                      code={code}
+                      setCode={setCode}
+                      language={language}
+                      highlightedLine={highlightedLine}
+                    />
+                  ) : (
+                    <Visualizer
+                      step={steps[stepIndex]}
+                      algorithm={algorithm}
+                      stepIndex={stepIndex}
+                    />
+                  )}
+                </div>
               </div>
-              <div className="w-full lg:w-1/2 min-w-0 h-64 lg:h-auto">
-                <Visualizer
-                  step={steps[stepIndex]}
-                  algorithm={algorithm}
-                  stepIndex={stepIndex}
-                />
+
+              {/* Desktop: Side by Side */}
+              <div className="hidden lg:flex lg:w-full h-full overflow-hidden">
+                <div className="w-1/2 h-full overflow-hidden">
+                  <CodeEditor
+                    code={code}
+                    setCode={setCode}
+                    language={language}
+                    highlightedLine={highlightedLine}
+                  />
+                </div>
+                <div className="w-1/2 h-full overflow-hidden">
+                  <Visualizer
+                    step={steps[stepIndex]}
+                    algorithm={algorithm}
+                    stepIndex={stepIndex}
+                  />
+                </div>
               </div>
             </div>
           )}
