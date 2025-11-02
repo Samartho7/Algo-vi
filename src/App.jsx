@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Sidebar from "./components/Sidebar";
-import Topbar from "./components/Topbar";
+import Topbar from "./components/topbar";
 import CodeEditor from "./components/CodeEditor";
 import Visualizer from "./components/Visualizer";
 import Controls from "./components/Controls";
@@ -30,7 +30,7 @@ export default function App() {
   const [originalArray, setOriginalArray] = useState([]);
   const [compareMode, setCompareMode] = useState(false);
   const [algorithm1, setAlgorithm1] = useState("bubble");
-  const [algorithm2, setAlgorithm2] = useState("merge"); // default comparison
+  const [algorithm2, setAlgorithm2] = useState("merge");
   const [steps1, setSteps1] = useState([]);
   const [steps2, setSteps2] = useState([]);
   const [stepIndex1, setStepIndex1] = useState(0);
@@ -40,14 +40,13 @@ export default function App() {
   const [speed1, setSpeed1] = useState(1000);
   const [speed2, setSpeed2] = useState(1000);
   const [isComparePlaying, setIsComparePlaying] = useState(false);
-  const [searchTarget, setSearchTarget] = useState(null); // default target value
+  const [searchTarget, setSearchTarget] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("visualization");
   const [activeTab1, setActiveTab1] = useState("visualization");
   const [activeTab2, setActiveTab2] = useState("visualization");
 
   const currentStep = steps.length > 0 ? steps[stepIndex] : null;
-  // Fix: Change 'lines' to 'line' and provide better fallback
   const highlightedLine = currentStep?.line?.[language] ?? 1;
 
   useEffect(() => {
@@ -55,7 +54,6 @@ export default function App() {
     setCode(template);
   }, [algorithm, language]);
 
-  // Update code template on algorithm or language change (default mode only)
   useEffect(() => {
     if (!compareMode) {
       const template = codeTemplates[algorithm][language];
@@ -63,7 +61,6 @@ export default function App() {
     }
   }, [algorithm, language, compareMode]);
 
-  // Parse input array string into actual number array
   useEffect(() => {
     const arr = inputArrayStr
       .split(",")
@@ -77,7 +74,6 @@ export default function App() {
     setOriginalArray(arr);
   }, [inputArrayStr]);
 
-  // Parse sorting steps based on current algorithms and mode
   useEffect(() => {
     const parseMap = {
       bubble: parseBubbleSort,
@@ -142,6 +138,7 @@ export default function App() {
       setIsPlaying(false);
       setIsPlaying1(false);
       setIsPlaying2(false);
+      setIsComparePlaying(false);
     },
     [originalArray]
   );
@@ -150,14 +147,12 @@ export default function App() {
     resetAnimation();
   }, [compareMode, algorithm, algorithm1, algorithm2, inputArray]);
 
-  // Sync main algorithm back when Compare Mode is turned off
   useEffect(() => {
     if (!compareMode) {
       setAlgorithm(algorithm1);
     }
   }, [compareMode]);
 
-  // Animate default mode
   useEffect(() => {
     if (compareMode || !isPlaying || stepIndex >= steps.length - 1) return;
 
@@ -165,6 +160,7 @@ export default function App() {
       setStepIndex((prev) => {
         if (prev < steps.length - 1) return prev + 1;
         clearInterval(interval);
+        setIsPlaying(false);
         return prev;
       });
     }, speed);
@@ -172,57 +168,45 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isPlaying, stepIndex, steps, compareMode, speed]);
 
-  // Animate Algorithm 1 (Compare Mode)
   useEffect(() => {
-    if (!compareMode || !isPlaying1 || stepIndex1 >= steps1.length - 1) return;
+    if (!compareMode || !isComparePlaying) return;
 
     const interval1 = setInterval(() => {
       setStepIndex1((prev) => {
         if (prev < steps1.length - 1) return prev + 1;
-        clearInterval(interval1);
         return prev;
       });
     }, speed1);
 
-    return () => clearInterval(interval1);
-  }, [isPlaying1, stepIndex1, steps1, compareMode, speed1]);
-
-  // Animate Algorithm 2 (Compare Mode)
-  useEffect(() => {
-    if (!compareMode || !isPlaying2 || stepIndex2 >= steps2.length - 1) return;
-
     const interval2 = setInterval(() => {
       setStepIndex2((prev) => {
         if (prev < steps2.length - 1) return prev + 1;
-        clearInterval(interval2);
         return prev;
       });
     }, speed2);
 
-    return () => clearInterval(interval2);
-  }, [isPlaying2, stepIndex2, steps2, compareMode, speed2]);
-
-  useEffect(() => {
-    if (compareMode) {
-      setIsPlaying1(isComparePlaying);
-      setIsPlaying2(isComparePlaying);
+    // Stop when both algorithms finish
+    if (stepIndex1 >= steps1.length - 1 && stepIndex2 >= steps2.length - 1) {
+      setIsComparePlaying(false);
     }
-  }, [isComparePlaying, compareMode]);
 
-  useEffect(() => {
-    if (currentStep && currentStep.line) {
-      console.log("🔍 Step line object:", currentStep.line);
-      console.log("📌 Highlighted line:", highlightedLine);
-    } else {
-      console.log("⛔ Step or line not available yet");
-    }
-  }, [currentStep, highlightedLine]);
-
-  console.log("📌 Highlighted line:", highlightedLine);
+    return () => {
+      clearInterval(interval1);
+      clearInterval(interval2);
+    };
+  }, [
+    isComparePlaying,
+    stepIndex1,
+    stepIndex2,
+    steps1,
+    steps2,
+    compareMode,
+    speed1,
+    speed2,
+  ]);
 
   return (
     <div className="flex h-screen bg-gray-100 text-gray-900">
-      {/* Sidebar - responsive */}
       <Sidebar
         language={language}
         setLanguage={setLanguage}
@@ -242,9 +226,7 @@ export default function App() {
         setSidebarOpen={setSidebarOpen}
       />
 
-      {/* Main Content Area */}
       <div className="flex flex-col flex-1 min-w-0 lg:ml-0">
-        {/* Mobile Header with Menu Button */}
         <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -255,12 +237,11 @@ export default function App() {
           <h1 className="text-lg font-semibold text-gray-900">
             Algorithm Visualizer
           </h1>
-          <div className="w-10" /> {/* Spacer for centering */}
+          <div className="w-10" />
         </div>
 
         <Topbar />
 
-        {/* Content Area - responsive layout */}
         <div className="flex flex-1 overflow-hidden">
           {compareMode ? (
             <div className="flex flex-col lg:flex-row w-full min-h-0 overflow-y-auto lg:overflow-y-hidden">
@@ -396,9 +377,9 @@ export default function App() {
               </div>
             </div>
           ) : (
-            <div className="flex w-full h-full overflow-hidden">
+            <div className="flex w-full overflow-hidden">
               {/* Mobile: Tabbed Interface */}
-              <div className="lg:hidden w-full flex flex-col flex-1 h-full">
+              <div className="lg:hidden w-full flex flex-col flex-1">
                 <div className="flex border-b border-gray-200 bg-white flex-shrink-0">
                   <button
                     onClick={() => setActiveTab("visualization")}
@@ -421,8 +402,7 @@ export default function App() {
                     💻 Code
                   </button>
                 </div>
-
-                <div className="flex-1 overflow-hidden h-full">
+                <div className="flex-1 overflow-hidden">
                   {activeTab === "code" ? (
                     <CodeEditor
                       code={code}
@@ -441,89 +421,46 @@ export default function App() {
               </div>
 
               {/* Desktop: Side by Side */}
-              <div className="hidden lg:flex lg:w-full h-full overflow-hidden">
-                <div className="w-1/2 h-full overflow-hidden">
-                  <CodeEditor
-                    code={code}
-                    setCode={setCode}
-                    language={language}
-                    highlightedLine={highlightedLine}
-                  />
-                </div>
-                <div className="w-1/2 h-full overflow-hidden">
-                  <Visualizer
-                    step={steps[stepIndex]}
-                    algorithm={algorithm}
-                    stepIndex={stepIndex}
-                  />
-                </div>
+              <div className="hidden lg:block lg:w-1/2 min-w-0">
+                <CodeEditor
+                  code={code}
+                  setCode={setCode}
+                  language={language}
+                  highlightedLine={highlightedLine}
+                />
+              </div>
+              <div className="hidden lg:block lg:w-1/2 min-w-0">
+                <Visualizer
+                  step={steps[stepIndex]}
+                  algorithm={algorithm}
+                  stepIndex={stepIndex}
+                />
               </div>
             </div>
           )}
         </div>
 
-        {/* Controls Section - responsive */}
+        {/* Controls Section */}
         {compareMode ? (
           <div className="flex-shrink-0 bg-gray-200">
-            {/* Individual Algorithm Controls */}
-            <div className="flex flex-col md:flex-row items-stretch py-2 gap-2 px-2">
-              <div className="flex-1">
-                <Controls
-                  stepIndex={stepIndex1}
-                  setStepIndex={setStepIndex1}
-                  steps={steps1}
-                  isPlaying={isPlaying1}
-                  setIsPlaying={setIsPlaying1}
-                  speed={speed1}
-                  setSpeed={setSpeed1}
-                  label={`Algorithm 1: ${algorithm1}`}
-                  onReset={() => {
-                    setStepIndex1(0);
-                    setIsPlaying1(false);
-                  }}
-                  isComparePlaying={isComparePlaying}
-                />
-              </div>
-              <div className="flex-1">
-                <Controls
-                  stepIndex={stepIndex2}
-                  setStepIndex={setStepIndex2}
-                  steps={steps2}
-                  isPlaying={isPlaying2}
-                  setIsPlaying={setIsPlaying2}
-                  speed={speed2}
-                  setSpeed={setSpeed2}
-                  label={`Algorithm 2: ${algorithm2}`}
-                  onReset={() => {
-                    setStepIndex2(0);
-                    setIsPlaying2(false);
-                  }}
-                  isComparePlaying={isComparePlaying}
-                />
-              </div>
-            </div>
-
-            {/* Global Control */}
-            <div className="w-full flex justify-center px-4 pb-4">
-              <div className="w-full max-w-md">
-                <Controls
-                  label="Global Control"
-                  isPlaying={isComparePlaying}
-                  setIsPlaying={setIsComparePlaying}
-                  steps={[]}
-                  stepIndex={0}
-                  setStepIndex={() => {}}
-                  onReset={resetAnimation}
-                  speed={Math.min(speed1, speed2)}
-                  setSpeed={(val) => {
-                    setSpeed1(val);
-                    setSpeed2(val);
-                  }}
-                  isComparePlaying={false}
-                  isGlobal={true}
-                />
-              </div>
-            </div>
+            {/* Synced Single Control for Compare Mode */}
+            <Controls
+              isCompareMode={true}
+              algorithm1={algorithm1}
+              algorithm2={algorithm2}
+              stepIndex1={stepIndex1}
+              stepIndex2={stepIndex2}
+              steps1={steps1}
+              steps2={steps2}
+              isPlaying={isComparePlaying}
+              setIsPlaying={setIsComparePlaying}
+              speed={speed1}
+              setSpeed={(val) => {
+                setSpeed1(val);
+                setSpeed2(val);
+              }}
+              onReset={resetAnimation}
+            />
           </div>
         ) : (
           <div className="flex-shrink-0 px-2 py-2">
@@ -536,6 +473,7 @@ export default function App() {
               speed={speed}
               setSpeed={setSpeed}
               onReset={resetAnimation}
+              algorithm1={algorithm}
             />
           </div>
         )}
