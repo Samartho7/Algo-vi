@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import Sidebar from "./components/Sidebar";
-import Topbar from "./components/topbar";
+import Topbar from "./components/Topbar";
 import CodeEditor from "./components/CodeEditor";
 import Visualizer from "./components/Visualizer";
 import Controls from "./components/Controls";
