@@ -5,21 +5,14 @@ export default function Visualizer({ step, algorithm }) {
   // 🔁 Linked List Visual (e.g., Singly Insert at Head)
   if (algorithm === "singly_insert_head") {
     return (
-      <div className="flex flex-col h-full overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50">
-        {/* Header */}
-        <div className="flex-shrink-0 p-2 md:p-4 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-          <h2 className="text-base md:text-xl font-bold text-slate-800 flex items-center gap-2">
-            🧠 Linked List Visualization
-          </h2>
-        </div>
-
-        {/* Main Content - Scrollable Container */}
-        <div className="flex-1 overflow-auto p-2 md:p-4">
-          <div className="min-h-[200px] p-2 md:p-4 bg-white rounded-lg shadow-sm border border-slate-200">
+      <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
+        {/* Main Content */}
+        <div className="flex-1 p-3 md:p-5 flex flex-col min-h-0">
+          <div className="flex-1 px-4 py-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center min-h-0 overflow-auto">
             <AnimatePresence>
-              {/* Linked List Nodes Container - Responsive Flow */}
+              {/* Linked List Nodes Container */}
               <motion.div
-                className="flex flex-wrap items-start gap-4 p-4 min-h-[200px]"
+                className="flex flex-wrap items-center justify-center gap-4 pt-8 pb-4"
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -140,8 +133,8 @@ export default function Visualizer({ step, algorithm }) {
           </div>
         </div>
 
-        {/* Info Panel */}
-        <div className="flex-shrink-0 px-2 py-1.5 md:px-3 md:py-2 bg-white border-t border-slate-200">
+        {/* Legend */}
+        <div className="flex-shrink-0 px-3 py-2 md:px-4 md:py-2.5 bg-white border-t border-slate-200">
           <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xs text-slate-600">
             <div className="flex items-center gap-1">
               <div className="w-2.5 h-2.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded"></div>
@@ -168,13 +161,7 @@ export default function Visualizer({ step, algorithm }) {
   // 🧠 Enhanced Search Visualization (Linear / Binary)
   if (algorithm?.includes("search")) {
     return (
-      <div className="flex flex-col h-full overflow-y-auto bg-gradient-to-br from-slate-50 to-indigo-50">
-        {/* Header */}
-        <div className="flex-shrink-0 p-2 md:p-4 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-          <h2 className="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
-            🔍 Search Visualization
-          </h2>
-        </div>
+      <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-indigo-50 overflow-hidden">
         {/* Complexity Information */}
         {(() => {
           const algorithmType =
@@ -182,41 +169,30 @@ export default function Visualizer({ step, algorithm }) {
           const info = complexityInfo[algorithmType];
           const arraySize = step?.array?.length || 0;
 
-          // Calculate expected iterations
           let expectedIterations = "N/A";
           if (algorithmType === "linear") {
-            expectedIterations = `Avg: ${Math.ceil(
-              arraySize / 2
-            )}, Max: ${arraySize}`;
+            expectedIterations = `Avg: ${Math.ceil(arraySize / 2)}, Max: ${arraySize}`;
           } else if (algorithmType === "binary") {
             expectedIterations = `Max: ${Math.ceil(Math.log2(arraySize))}`;
           }
 
           return info ? (
-            <div className="flex-shrink-0 px-2 py-2 md:px-3 md:py-2.5 bg-gradient-to-r from-white to-slate-50 border-b border-slate-200">
+            <div className="flex-shrink-0 px-3 py-2 md:px-4 md:py-2.5 bg-gradient-to-r from-white to-slate-50 border-b border-slate-200">
               <div className="flex flex-wrap items-center justify-center gap-1.5 md:gap-2 text-xs">
                 <span className="font-semibold text-slate-700 hidden md:inline">
                   {info.name}:
                 </span>
                 <div className="flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded-full">
-                  <span className="text-green-700 font-medium">
-                    Best: {info.best}
-                  </span>
+                  <span className="text-green-700 font-medium">Best: {info.best}</span>
                 </div>
                 <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 rounded-full">
-                  <span className="text-yellow-700 font-medium">
-                    Avg: {info.average}
-                  </span>
+                  <span className="text-yellow-700 font-medium">Avg: {info.average}</span>
                 </div>
                 <div className="flex items-center gap-1 px-2 py-0.5 bg-red-100 rounded-full">
-                  <span className="text-red-700 font-medium">
-                    Worst: {info.worst}
-                  </span>
+                  <span className="text-red-700 font-medium">Worst: {info.worst}</span>
                 </div>
                 <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-100 rounded-full">
-                  <span className="text-blue-700 font-medium">
-                    Steps: {expectedIterations}
-                  </span>
+                  <span className="text-blue-700 font-medium">Steps: {expectedIterations}</span>
                 </div>
               </div>
             </div>
@@ -224,10 +200,10 @@ export default function Visualizer({ step, algorithm }) {
         })()}
 
         {/* Main Container */}
-        <div className="flex-1 p-2 md:p-4 overflow-auto">
-          <div className="min-h-[300px] p-2 md:p-4 bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col">
+        <div className="flex-1 p-3 md:p-5 flex flex-col min-h-0">
+          <div className="flex-1 px-4 py-4 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-0">
             {/* Bars Container */}
-            <div className="flex-1 flex gap-1 md:gap-2 justify-center items-end py-2 md:py-4 min-h-[200px]">
+            <div className="flex-1 flex gap-2 md:gap-3 justify-center items-center min-h-0">
               <AnimatePresence>
                 {step?.array?.map(({ id, value }, i) => {
                   const isCompared =
@@ -284,10 +260,10 @@ export default function Visualizer({ step, algorithm }) {
                   }
 
                   // Dynamic bar sizing
-                  const maxHeight = 140;
+                  const maxHeight = 200;
                   const minHeight = 40;
                   const height = Math.min(
-                    Math.max(value * 3 + minHeight, minHeight),
+                    Math.max(value * 5 + minHeight, minHeight),
                     maxHeight
                   );
 
@@ -441,8 +417,8 @@ export default function Visualizer({ step, algorithm }) {
           </div>
         </div>
 
-        {/* Enhanced Legend */}
-        <div className="flex-shrink-0 px-2 py-1.5 md:px-3 md:py-2 bg-white border-t border-slate-200">
+        {/* Legend */}
+        <div className="flex-shrink-0 px-3 py-2 md:px-4 md:py-2.5 bg-white border-t border-slate-200">
           <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xs text-slate-600">
             <div className="flex items-center gap-1">
               <div className="w-2.5 h-2.5 bg-gradient-to-r from-slate-700 to-slate-800 rounded"></div>
@@ -477,19 +453,12 @@ export default function Visualizer({ step, algorithm }) {
   // 🧠 Array-based Sorting Visualization (Default)
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-gradient-to-br from-slate-50 to-indigo-50">
-      {/* Header */}
-      <div className="flex-shrink-0 p-2 md:p-4 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-        <h2 className="text-base md:text-lg font-bold text-slate-800 flex items-center gap-2">
-          🧠 Sorting Visualization
-        </h2>
-      </div>
-
-      {/* Main Sorting Container - Takes most of the space */}
-      <div className="flex-1 p-2 md:p-4 overflow-auto">
-        <div className="min-h-[250px] p-2 md:p-4 bg-white rounded-lg shadow-sm border border-slate-200 flex flex-col">
-          {/* Bars Container */}
-          <div className="flex-1 flex gap-1 md:gap-2 justify-center items-end min-h-[180px] py-2 md:py-4">
+    <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-indigo-50 overflow-hidden">
+      {/* Main Sorting Container */}
+      <div className="flex-1 p-3 md:p-5 flex flex-col min-h-0">
+        <div className="flex-1 px-4 py-4 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-0">
+          {/* Bars Container — vertically centres bars */}
+          <div className="flex-1 flex gap-2 md:gap-3 justify-center items-center min-h-0">
             <AnimatePresence>
               {step?.array?.map(({ id, value }, i) => {
                 const isActive = step.indices?.includes(i);
@@ -573,10 +542,10 @@ export default function Visualizer({ step, algorithm }) {
                 }
 
                 // Dynamic bar sizing based on container
-                const maxHeight = 120; // Reduced max height
-                const minHeight = 32;
+                const maxHeight = 200;
+                const minHeight = 40;
                 const height = Math.min(
-                  Math.max(value * 3 + minHeight, minHeight),
+                  Math.max(value * 5 + minHeight, minHeight),
                   maxHeight
                 );
 
@@ -598,10 +567,10 @@ export default function Visualizer({ step, algorithm }) {
                       damping: 25,
                       duration: 0.3,
                     }}
-                    className={`w-7 md:w-10 flex items-center justify-center rounded-md font-bold border-2 transition-all duration-300 ${bgColor} ${textColor} ${borderColor} shadow-md ${shadowColor}`}
+                    className={`w-9 sm:w-10 md:w-12 flex items-center justify-center rounded-md font-bold border-2 transition-all duration-300 ${bgColor} ${textColor} ${borderColor} shadow-md ${shadowColor}`}
                     style={{ height: `${height}px` }}
                   >
-                    <span className="text-xs md:text-sm font-bold drop-shadow-sm select-none">
+                    <span className="text-[11px] sm:text-xs md:text-sm font-bold drop-shadow-sm select-none">
                       {value}
                     </span>
                   </motion.div>
@@ -610,22 +579,17 @@ export default function Visualizer({ step, algorithm }) {
             </AnimatePresence>
           </div>
 
-          {/* Current Step Info - Compact */}
-          <div className="flex-shrink-0 p-2 md:p-3 bg-slate-50 rounded-md border border-slate-200">
+          {/* Current Step Info — always horizontal row */}
+          <div className="flex-shrink-0 mt-2 px-2 py-1.5 md:p-3 bg-slate-50 rounded-md border border-slate-200">
             {step && (
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between text-xs md:text-sm gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>
-                    <strong>Action:</strong> {step.action}
-                  </span>
+              <div className="flex items-center justify-between text-xs md:text-sm gap-2">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                  <span><strong>Action:</strong> {step.action}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                  <span>
-                    <strong>Indices:</strong>{" "}
-                    {step.indices?.join(", ") || "None"}
-                  </span>
+                <div className="flex items-center gap-1.5">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0"></div>
+                  <span><strong>Indices:</strong> {step.indices?.join(", ") || "None"}</span>
                 </div>
               </div>
             )}
@@ -633,33 +597,25 @@ export default function Visualizer({ step, algorithm }) {
         </div>
       </div>
 
-      {/* Complexity Info - Compact */}
-      <div className="flex-shrink-0 px-2 py-1.5 md:px-3 md:py-2 bg-gradient-to-r from-slate-50 to-slate-100 border-t border-slate-200">
+      {/* Complexity Info */}
+      <div className="flex-shrink-0 px-3 py-1.5 bg-gradient-to-r from-slate-50 to-slate-100 border-t border-slate-200">
         {algorithm && complexityInfo[algorithm] && (
-          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3 text-xs">
-            <span className="font-semibold text-slate-700 hidden md:inline">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
+            <span className="font-semibold text-slate-500 text-[10px]">
               {complexityInfo[algorithm].name}:
             </span>
-            <div className="flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded-full">
-              <span className="text-green-700 font-medium">
-                Best: {complexityInfo[algorithm].best}
-              </span>
-            </div>
-            <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 rounded-full">
-              <span className="text-yellow-700 font-medium">
-                Avg: {complexityInfo[algorithm].average}
-              </span>
-            </div>
-            <div className="flex items-center gap-1 px-2 py-0.5 bg-red-100 rounded-full">
-              <span className="text-red-700 font-medium">
-                Worst: {complexityInfo[algorithm].worst}
-              </span>
-            </div>
-            <div className="flex items-center gap-1 px-2 py-0.5 bg-purple-100 rounded-full">
-              <span className="text-purple-700 font-medium">
-                Space: {complexityInfo[algorithm].space}
-              </span>
-            </div>
+            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 font-medium rounded-full">
+              Best: {complexityInfo[algorithm].best}
+            </span>
+            <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 font-medium rounded-full">
+              Avg: {complexityInfo[algorithm].average}
+            </span>
+            <span className="px-1.5 py-0.5 bg-red-100 text-red-700 font-medium rounded-full">
+              Worst: {complexityInfo[algorithm].worst}
+            </span>
+            <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 font-medium rounded-full">
+              Space: {complexityInfo[algorithm].space}
+            </span>
           </div>
         )}
       </div>

@@ -7,7 +7,7 @@
 // }
 export default function Topbar() {
   return (
-    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 shadow-lg px-6 py-4 relative overflow-hidden">
+    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 shadow-lg px-4 py-2 md:px-6 md:py-2.5 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl animate-pulse"></div>
@@ -37,19 +37,16 @@ export default function Topbar() {
 
           {/* Title */}
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
+            <h1 className="text-lg md:text-2xl font-bold text-white tracking-tight">
               Visualize your algorithms
             </h1>
-            <p className="text-blue-100 text-sm mt-1 hidden md:block">
-              Watch your code come to life in real time
-            </p>
           </div>
         </div>
 
         {/* Rocket icon with animation */}
-        <div className="flex items-center space-x-2">
-          <div className="text-2xl animate-bounce">🚀</div>
-          <div className="hidden md:flex items-center space-x-2 bg-white/10 px-3 py-2 rounded-full backdrop-blur-sm">
+        <div className="hidden sm:flex items-center space-x-2">
+          <div className="text-xl animate-bounce">🚀</div>
+          <div className="hidden md:flex items-center space-x-2 bg-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <span className="text-white text-sm font-medium">Live</span>
           </div>

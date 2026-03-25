@@ -171,28 +171,15 @@ export default function Controls({
     steps.length > 0 ? (stepIndex / (steps.length - 1)) * 100 : 0;
 
   return (
-    <div className="flex-1 bg-gradient-to-r from-slate-50 to-slate-100 border-t border-slate-200 shadow-sm mx-1">
-      {/* Algorithm Name Header */}
-      <div className="text-center font-semibold text-slate-700 py-2 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-slate-200">
-        <span className="text-sm px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full inline-block">
-          {label ||
-            `${
-              algorithm1?.charAt(0).toUpperCase() +
-                algorithm1?.slice(1).replace("_", " ") || "Algorithm"
-            }`}
-        </span>
-      </div>
-
-      <div className="px-3 py-2">
+    <div className="flex-1 bg-gradient-to-r from-slate-50 to-slate-100 border-t border-slate-200 shadow-sm">
+      <div className="px-2 py-2 md:px-3 md:py-2.5">
         {/* Progress Bar */}
         <div className="mb-2">
           <div className="flex justify-between items-center mb-1">
-            <span className="text-xs font-medium text-slate-600">
-              Step {stepIndex + 1} of {steps.length}
+            <span className="text-xs font-medium text-slate-600 truncate max-w-[60%]">
+              <span className="hidden sm:inline">{algorithm1?.charAt(0).toUpperCase() + algorithm1?.slice(1).replace("_", " ") || "Algorithm"} — </span>Step {stepIndex + 1}/{steps.length}
             </span>
-            <span className="text-xs text-slate-500">
-              {Math.round(progress)}%
-            </span>
+            <span className="text-xs text-slate-500">{Math.round(progress)}%</span>
           </div>
           <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
             <div
@@ -202,14 +189,12 @@ export default function Controls({
           </div>
         </div>
 
-        {/* Control Buttons */}
-        <div className="flex flex-col gap-2">
-          {/* Play/Pause and Navigation Buttons */}
-          <div className="flex items-center justify-center gap-2">
+        {/* Single row: all controls */}
+        <div className="flex items-center justify-center gap-1.5 md:gap-2 flex-wrap">
             {/* Play/Pause Button */}
             <button
               onClick={() => setIsPlaying(!isPlaying)}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm text-sm ${
+              className={`flex items-center gap-1 px-2.5 py-1.5 md:px-3 rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm text-xs md:text-sm ${
                 isPlaying
                   ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600"
                   : "bg-gradient-to-r from-emerald-500 to-green-500 text-white hover:from-emerald-600 hover:to-green-600"
@@ -236,9 +221,9 @@ export default function Controls({
                 }
               }}
               disabled={isPlaying || stepIndex === 0}
-              className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-sm text-sm"
+              className="flex items-center gap-1 px-2.5 py-1.5 md:px-3 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-sm text-xs md:text-sm"
             >
-              <SkipBack size={14} />
+              <SkipBack size={13} />
               <span>Prev</span>
             </button>
 
@@ -250,7 +235,7 @@ export default function Controls({
                 }
               }}
               disabled={isPlaying || stepIndex >= steps.length - 1}
-              className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-sm text-sm"
+              className="flex items-center gap-1 px-2.5 py-1.5 md:px-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-sm text-xs md:text-sm"
             >
               <SkipForward size={14} />
               <span>Next</span>
@@ -259,42 +244,32 @@ export default function Controls({
             {/* Reset Button */}
             <button
               onClick={handleReset}
-              className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm text-sm"
+              className="flex items-center gap-1 px-2.5 py-1.5 md:px-3 bg-gradient-to-r from-red-500 to-rose-500 text-white rounded-md font-medium transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-sm text-xs md:text-sm"
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={13} />
               <span>Reset</span>
             </button>
-          </div>
 
           {/* Speed Control */}
-          <div className="flex items-center justify-center gap-2 bg-white rounded-md px-3 py-1.5 shadow-inner border border-slate-200">
-            <div className="flex items-center gap-1 text-slate-600">
-              <Zap size={14} />
-              <span className="text-xs font-medium">Speed:</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="range"
-                min="100"
-                max="2000"
-                step="100"
-                value={speed}
-                onChange={(e) => setSpeed(Number(e.target.value))}
-                className="w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider"
-                style={{
-                  background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${
-                    ((2000 - speed) / 1900) * 100
-                  }%, #e2e8f0 ${((2000 - speed) / 1900) * 100}%, #e2e8f0 100%)`,
-                }}
-              />
-              <div className="flex items-center gap-1 min-w-[3rem]">
-                <Clock size={12} className="text-slate-500" />
-                <span className="text-xs font-medium text-slate-700">
-                  {speed}ms
-                </span>
-              </div>
-            </div>
+          <div className="flex items-center gap-1.5 bg-white rounded-md px-2 py-1.5 md:px-3 shadow-inner border border-slate-200">
+            <Zap size={13} className="text-slate-500 flex-shrink-0" />
+            <input
+              type="range"
+              min="100"
+              max="2000"
+              step="100"
+              value={speed}
+              onChange={(e) => setSpeed(Number(e.target.value))}
+              className="w-16 md:w-24 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer slider flex-shrink-0"
+              style={{
+                background: `linear-gradient(to right, #6366f1 0%, #6366f1 ${
+                  ((2000 - speed) / 1900) * 100
+                }%, #e2e8f0 ${((2000 - speed) / 1900) * 100}%, #e2e8f0 100%)`,
+              }}
+            />
+            <span className="text-xs font-medium text-slate-600 min-w-[2.5rem] hidden sm:inline">
+              {speed}ms
+            </span>
           </div>
         </div>
       </div>

@@ -206,7 +206,7 @@ export default function App() {
   ]);
 
   return (
-    <div className="flex h-screen bg-gray-100 text-gray-900">
+    <div className="flex h-[100dvh] bg-gray-100 text-gray-900 overflow-hidden">
       <Sidebar
         language={language}
         setLanguage={setLanguage}
@@ -227,17 +227,16 @@ export default function App() {
       />
 
       <div className="flex flex-col flex-1 min-w-0 lg:ml-0">
-        <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-200">
+        {/* Mobile top bar — slim, just a menu button + centered title */}
+        <div className="lg:hidden flex items-center justify-between px-3 py-2 bg-white border-b border-gray-200">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <Menu className="w-6 h-6 text-gray-600" />
+            <Menu className="w-5 h-5 text-gray-600" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">
-            Algorithm Visualizer
-          </h1>
-          <div className="w-10" />
+          <span className="text-sm font-semibold text-gray-700">Algorithm Visualizer</span>
+          <div className="w-8" />
         </div>
 
         <Topbar />
@@ -463,7 +462,7 @@ export default function App() {
             />
           </div>
         ) : (
-          <div className="flex-shrink-0 px-2 py-2">
+          <div className="flex-shrink-0">
             <Controls
               stepIndex={stepIndex}
               setStepIndex={setStepIndex}
