@@ -613,5 +613,83 @@ public class SinglyLinkedList {
     }
 }`,
   },
+  singly_traversal: {
+    c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node { int data; struct Node* next; };
+
+void traverse(struct Node* head) {
+  struct Node* curr = head;   /* curr points to head */
+  while (curr != NULL) {      /* loop until end */
+    printf("%d -> ", curr->data);
+    curr = curr->next;        /* move to next node */
+  }
+  printf("NULL\\n");
+}
+
+int main() {
+  struct Node* head = NULL;
+  /* build list: 3 -> 5 -> 7 -> NULL */
+  struct Node* n3 = malloc(sizeof(struct Node));
+  n3->data = 3; n3->next = NULL;
+  struct Node* n2 = malloc(sizeof(struct Node));
+  n2->data = 5; n2->next = n3;
+  struct Node* n1 = malloc(sizeof(struct Node));
+  n1->data = 7; n1->next = n2;
+  head = n1;
+  traverse(head);
+  return 0;
+}`,
+
+    cpp: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; };
+
+void traverse(Node* head) {
+  Node* curr = head;          // curr points to head
+  while (curr != nullptr) {   // loop until end
+    cout << curr->data << " -> ";
+    curr = curr->next;        // move to next node
+  }
+  cout << "NULL" << endl;
+}
+
+int main() {
+  Node* head = nullptr;
+  /* build list: 7 -> 5 -> 3 -> NULL */
+  Node* n3 = new Node{3, nullptr};
+  Node* n2 = new Node{5, n3};
+  Node* n1 = new Node{7, n2};
+  head = n1;
+  traverse(head);
+  return 0;
+}`,
+
+    java: `class Node {
+  int data;
+  Node next;
+  Node(int d) { data = d; next = null; }
+}
+
+public class TraverseList {
+  static void traverse(Node head) {
+    Node curr = head;          // curr points to head
+    while (curr != null) {     // loop until end
+      System.out.print(curr.data + " -> ");
+      curr = curr.next;        // move to next node
+    }
+    System.out.println("NULL");
+  }
+
+  public static void main(String[] args) {
+    Node head = new Node(7);
+    head.next = new Node(5);
+    head.next.next = new Node(3);
+    traverse(head);
+  }
+}`,
+  },
 };
 export default codeTemplates;

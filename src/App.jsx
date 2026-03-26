@@ -11,6 +11,7 @@ import {
   parseInsertionSort,
   parseQuickSort,
   parseSinglyInsertHead,
+  parseLinkedListTraversal,
   parseLinearSearch,
   parseBinarySearch,
 } from "./utils/parseAlgorithms";
@@ -82,6 +83,7 @@ export default function App() {
       insertion: parseInsertionSort,
       quick: parseQuickSort,
       singly_insert_head: parseSinglyInsertHead,
+      singly_traversal: parseLinkedListTraversal,
       linear_search: parseLinearSearch,
       binary_search: parseBinarySearch,
     };

@@ -158,6 +158,259 @@ export default function Visualizer({ step, algorithm }) {
     );
   }
 
+  // 🔁 Linked List Traversal Visualization
+  if (algorithm === "singly_traversal") {
+    const nodes = step?.nodes || [];
+    const isDone = step?.action === "done";
+    const isMove = step?.action === "move";
+
+    return (
+      <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-teal-50 overflow-hidden">
+        {/* Main Content */}
+        <div className="flex-1 p-3 md:p-5 flex flex-col min-h-0">
+          <div className="flex-1 px-4 py-6 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center min-h-0 overflow-auto">
+            <AnimatePresence>
+              {/* Node row */}
+              <motion.div
+                className="flex flex-wrap items-center justify-center gap-4 pt-10 pb-4"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: {},
+                  visible: { transition: { staggerChildren: 0.1 } },
+                }}
+              >
+                {nodes.map((node, idx) => {
+                  const isLastNode = idx === nodes.length - 1;
+                  const isCurrent = node.isCurrent;
+                  const isVisited = node.isVisited;
+                  const isMoving = node.isMoving;
+
+                  return (
+                    <motion.div
+                      key={node.id}
+                      variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+                      className="flex items-center gap-3"
+                    >
+                      {/* Node container */}
+                      <div className="relative">
+                        {/* Labels above node */}
+                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5 z-10">
+                          {node.isHead && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full shadow border border-yellow-300"
+                            >
+                              HEAD
+                            </motion.div>
+                          )}
+                          {isCurrent && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-cyan-500 to-teal-500 text-white rounded-full shadow-lg border border-cyan-300"
+                            >
+                              {isMoving ? "→" : "CURR"}
+                            </motion.div>
+                          )}
+                        </div>
+
+                        {/* Node block */}
+                        <motion.div
+                          animate={{
+                            scale: isCurrent ? 1.1 : isDone ? 1 : 1,
+                            boxShadow: isCurrent
+                              ? "0 0 0 3px rgba(20, 184, 166, 0.5), 0 4px 20px rgba(20,184,166,0.3)"
+                              : isVisited
+                              ? "0 2px 6px rgba(0,0,0,0.08)"
+                              : "0 4px 12px rgba(0,0,0,0.1)",
+                          }}
+                          transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                          className={`flex border-2 rounded-lg overflow-hidden min-w-[120px] transition-all duration-300 ${
+                            isCurrent
+                              ? "border-teal-400 bg-white"
+                              : isVisited
+                              ? "border-slate-200 opacity-60"
+                              : isDone
+                              ? "border-green-300"
+                              : "border-slate-300 bg-white"
+                          }`}
+                        >
+                          {/* Data Section */}
+                          <div
+                            className={`p-3 text-center w-1/2 relative ${
+                              isCurrent
+                                ? "bg-gradient-to-b from-teal-500 to-cyan-600 text-white"
+                                : isVisited
+                                ? "bg-gradient-to-b from-slate-400 to-slate-500 text-white"
+                                : isDone
+                                ? "bg-gradient-to-b from-green-500 to-emerald-600 text-white"
+                                : "bg-gradient-to-b from-blue-500 to-blue-600 text-white"
+                            }`}
+                          >
+                            <div className="text-lg font-bold mb-0.5">{node.value}</div>
+                            <div className="text-[10px] font-mono opacity-90">Data</div>
+                            {/* Visited checkmark */}
+                            {isVisited && !isCurrent && (
+                              <div className="absolute top-1 right-1 text-xs">✓</div>
+                            )}
+                          </div>
+
+                          {/* Next Section */}
+                          <div className="bg-gradient-to-b from-slate-100 to-slate-200 text-slate-700 p-3 text-center w-1/2 border-l-2 border-slate-300">
+                            <div className={`text-[10px] font-mono font-bold mb-1 ${
+                              isMoving ? "text-teal-600 animate-pulse" : ""
+                            }`}>
+                              {node.next ?? "NULL"}
+                            </div>
+                            <div className="text-[10px] font-mono opacity-75">Next</div>
+                          </div>
+                        </motion.div>
+
+                        {/* TAIL label */}
+                        {node.isTail && (
+                          <div className="absolute -bottom-7 left-1/2 -translate-x-1/2">
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-full shadow border border-green-300"
+                            >
+                              TAIL
+                            </motion.div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Arrow */}
+                      {!isLastNode && (
+                        <motion.div
+                          animate={{
+                            color: node.isMoving ? "#14b8a6" : "#94a3b8",
+                            scale: node.isMoving ? [1, 1.3, 1] : 1,
+                          }}
+                          transition={{ duration: 0.4 }}
+                          className="flex items-center"
+                        >
+                          <svg className="w-8 h-8 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <polyline points="16,6 22,12 16,18" />
+                          </svg>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+
+                {/* NULL terminus */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{
+                    opacity: isDone ? 1 : 0.4,
+                    x: 0,
+                    scale: isDone ? [1, 1.15, 1] : 1,
+                  }}
+                  transition={{ duration: 0.5 }}
+                  className="flex items-center gap-3"
+                >
+                  <svg className="w-8 h-8 text-slate-300 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <polyline points="16,6 22,12 16,18" />
+                  </svg>
+                  <div className={`px-4 py-2 rounded-lg border-2 font-mono font-bold text-sm transition-all duration-300 ${
+                    isDone
+                      ? "border-green-400 bg-green-50 text-green-700 shadow-md"
+                      : "border-slate-300 bg-slate-50 text-slate-400"
+                  }`}>
+                    NULL
+                  </div>
+                </motion.div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Empty state */}
+            {nodes.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-12 text-slate-500 flex flex-col items-center justify-center"
+              >
+                <div className="text-4xl mb-4">🔗</div>
+                <div className="text-lg font-medium">Empty Linked List</div>
+                <div className="text-sm">Add values to traverse</div>
+              </motion.div>
+            )}
+          </div>
+        </div>
+
+        {/* Status bar */}
+        <div className="flex-shrink-0 px-3 py-2 md:px-4 bg-white border-t border-slate-200">
+          {/* Progress + message */}
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2">
+              <div className={`w-2.5 h-2.5 rounded-full ${
+                step?.action === "visit" ? "bg-teal-500 animate-pulse" :
+                step?.action === "move" ? "bg-cyan-500 animate-bounce" :
+                step?.action === "done" ? "bg-green-500" :
+                "bg-slate-400"
+              }`} />
+              <span className="text-xs font-semibold text-slate-600">
+                {step?.action === "done" ? "Done" :
+                 step?.action === "move" ? "Moving" :
+                 step?.action === "visit" ? "Visiting" : "Ready"}
+              </span>
+            </div>
+            <span className="text-xs text-slate-500">
+              Visited: {step?.visitedCount ?? 0} / {nodes.length}
+            </span>
+          </div>
+          {step?.message && (
+            <motion.div
+              key={step.message}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`text-xs px-3 py-1.5 rounded-lg border-l-4 ${
+                step.action === "done"
+                  ? "bg-green-50 border-green-400 text-green-800"
+                  : step.action === "visit"
+                  ? "bg-teal-50 border-teal-400 text-teal-800"
+                  : step.action === "move"
+                  ? "bg-cyan-50 border-cyan-400 text-cyan-800"
+                  : "bg-slate-50 border-slate-400 text-slate-700"
+              }`}
+            >
+              {step.message}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Legend */}
+        <div className="flex-shrink-0 px-3 py-2 md:px-4 bg-white border-t border-slate-100">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-600">
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2.5 bg-gradient-to-r from-teal-500 to-cyan-600 rounded" />
+              <span>Current (CURR)</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2.5 bg-gradient-to-r from-slate-400 to-slate-500 rounded opacity-60" />
+              <span>Visited ✓</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2.5 bg-gradient-to-r from-blue-500 to-blue-600 rounded" />
+              <span>Unvisited</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2.5 h-2.5 bg-gradient-to-r from-green-500 to-emerald-600 rounded" />
+              <span>Done</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // 🧠 Enhanced Search Visualization (Linear / Binary)
   if (algorithm?.includes("search")) {
     return (

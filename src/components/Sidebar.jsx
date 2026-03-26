@@ -142,6 +142,9 @@ export default function Sidebar({
                   <option value="singly_insert_head">
                     Singly - Insert at Head
                   </option>
+                  <option value="singly_traversal">
+                    Singly - Traversal
+                  </option>
                 </optgroup>
               </select>
               <ChevronDown className="absolute right-2.5 lg:right-3 top-3 lg:top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />

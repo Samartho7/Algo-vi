@@ -306,6 +306,84 @@ export function parseSinglyInsertHead(inputArray) {
   return steps;
 }
 
+export function parseLinkedListTraversal(inputArray) {
+  if (!inputArray || inputArray.length === 0) return [];
+
+  const steps = [];
+
+  // Build the linked list internal structure from the input array values
+  const values = inputArray.map((item) => item.value ?? item);
+
+  // Build node objects
+  const nodes = values.map((val, idx) => ({
+    id: `trav-${idx}`,
+    value: val,
+    isHead: idx === 0,
+    isTail: idx === values.length - 1,
+    next: idx < values.length - 1 ? `0x${(1000 + idx + 1).toString(16)}` : null,
+  }));
+
+  // Step 1: Initial state — all nodes unvisited, curr at head
+  steps.push({
+    nodes: nodes.map((n, i) => ({
+      ...n,
+      isCurrent: i === 0,
+      isVisited: false,
+    })),
+    currentIndex: 0,
+    visitedCount: 0,
+    action: "start",
+    message: `Traversal starts at HEAD (value: ${nodes[0].value})`,
+    line: { cpp: 3, c: 3, java: 4 },
+  });
+
+  // Step 2+: Visit each node
+  for (let i = 0; i < nodes.length; i++) {
+    // Mark i as visiting, 0..i-1 as visited
+    steps.push({
+      nodes: nodes.map((n, idx) => ({
+        ...n,
+        isCurrent: idx === i,
+        isVisited: idx < i,
+      })),
+      currentIndex: i,
+      visitedCount: i,
+      action: "visit",
+      message: `Visiting node ${i + 1}/${nodes.length} — value: ${nodes[i].value}${nodes[i].isHead ? " (HEAD)" : ""}${nodes[i].isTail ? " (TAIL)" : ""}`,
+      line: { cpp: 5, c: 5, java: 6 },
+    });
+
+    // Move-to-next step (if not tail)
+    if (i < nodes.length - 1) {
+      steps.push({
+        nodes: nodes.map((n, idx) => ({
+          ...n,
+          isCurrent: idx === i,
+          isVisited: idx < i,
+          isMoving: idx === i, // pointer is jumping
+        })),
+        currentIndex: i,
+        visitedCount: i,
+        action: "move",
+        message: `curr = curr→next  (moving to node with value: ${nodes[i + 1].value})`,
+        line: { cpp: 6, c: 6, java: 7 },
+      });
+    }
+  }
+
+  // Final step: reached NULL
+  steps.push({
+    nodes: nodes.map((n) => ({ ...n, isCurrent: false, isVisited: true })),
+    currentIndex: nodes.length,
+    visitedCount: nodes.length,
+    action: "done",
+    message: `✅ Traversal complete! Visited all ${nodes.length} nodes. curr = NULL`,
+    line: { cpp: 7, c: 7, java: 8 },
+  });
+
+  return steps;
+}
+
 // Helper to convert linked list to array of nodes with flags
 function buildSnapshot(head) {
   const nodes = [];
