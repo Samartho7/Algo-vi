@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Code,
   Settings,
@@ -9,7 +10,14 @@ import {
   Layers,
   Binary,
   X,
+  Info,
+  Clock,
+  HardDrive,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
+import { complexityInfo } from "../utils/complexityInfo";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Sidebar({
   language,
@@ -31,6 +39,9 @@ export default function Sidebar({
 }) {
   const isLinkedList = algorithm?.startsWith("singly");
   const isSearchAlgorithm = algorithm?.includes("search");
+  const [infoOpen, setInfoOpen] = useState(true);
+
+  const currentAlgoInfo = complexityInfo[algorithm];
 
   return (
     <>
@@ -373,10 +384,140 @@ export default function Sidebar({
               </div>
             </div>
           )}
+
+          {/* Algorithm Info Panel — inside the scroll area so it's always reachable */}
+          {(compareMode ? complexityInfo[algorithm1] : currentAlgoInfo) && (
+            <div className="border-t border-slate-700/50 -mx-4 lg:-mx-6 pt-4">
+              <button
+                onClick={() => setInfoOpen((o) => !o)}
+                className="w-full flex items-center justify-between px-4 lg:px-6 pb-3 text-sm font-semibold text-slate-300 hover:text-white transition-colors duration-200"
+              >
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-cyan-400" />
+                  <span>Algorithm Details</span>
+                </div>
+                <motion.div
+                  animate={{ rotate: infoOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown className="w-4 h-4 text-slate-400" />
+                </motion.div>
+              </button>
+
+              <AnimatePresence initial={false}>
+                {infoOpen && (
+                  <motion.div
+                    key={compareMode ? "info-compare" : "info-single"}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    {compareMode ? (
+                      /* ── Compare mode: two cards side-by-side ── */
+                      <div className="px-4 lg:px-6 pb-4 space-y-3">
+                        <div className="grid grid-cols-2 gap-3">
+                          {[
+                            { key: algorithm1, isFirst: true,  label: "Algo 1" },
+                            { key: algorithm2, isFirst: false, label: "Algo 2" },
+                          ].map(({ key, isFirst, label }) => {
+                            const info = complexityInfo[key];
+                            if (!info) return null;
+                            return (
+                              <div
+                                key={label}
+                                className={`flex flex-col gap-2 p-3 rounded-xl border ${
+                                  isFirst
+                                    ? "bg-indigo-500/5 border-indigo-500/20"
+                                    : "bg-pink-500/5 border-pink-500/20"
+                                }`}
+                              >
+                                {/* Card header */}
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${isFirst ? "bg-indigo-400" : "bg-pink-400"}`} />
+                                  <span className={`text-[10px] font-bold uppercase tracking-widest ${isFirst ? "text-indigo-400" : "text-pink-400"}`}>
+                                    {label}
+                                  </span>
+                                </div>
+                                <p className={`text-xs font-semibold leading-tight ${isFirst ? "text-indigo-200" : "text-pink-200"}`}>
+                                  {info.name}
+                                </p>
+
+                                {/* Mini complexity rows */}
+                                <div className="space-y-1 mt-1">
+                                  {[
+                                    { label: "Best",  val: info.best,    color: "text-green-400" },
+                                    { label: "Avg",   val: info.average, color: "text-yellow-400" },
+                                    { label: "Worst", val: info.worst,   color: "text-red-400" },
+                                    { label: "Space", val: info.space,   color: "text-blue-400" },
+                                  ].map(({ label: l, val, color }) => (
+                                    <div key={l} className="flex items-center justify-between text-[10px]">
+                                      <span className="text-slate-500 uppercase tracking-wider">{l}</span>
+                                      <span className={`font-bold font-mono ${color}`}>{val}</span>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                {/* Stability */}
+                                <div className={`flex items-center gap-1 mt-1 text-[10px] font-medium ${
+                                  info.stable ? "text-emerald-400" : "text-orange-400"
+                                }`}>
+                                  {info.stable
+                                    ? <CheckCircle className="w-3 h-3 flex-shrink-0" />
+                                    : <XCircle className="w-3 h-3 flex-shrink-0" />}
+                                  <span>{info.stable ? "Stable" : "Unstable"}</span>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      /* ── Single mode: full-width card ── */
+                      <div className="px-4 lg:px-6 pb-4 space-y-3">
+                        <p className="text-xs text-slate-400 leading-relaxed border-l-2 border-cyan-500/40 pl-3">
+                          {currentAlgoInfo.desc}
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1 p-2 bg-green-500/10 border border-green-500/20 rounded-lg">
+                            <span className="text-[10px] font-medium text-green-400 uppercase tracking-wider">Best</span>
+                            <span className="text-sm font-bold font-mono text-green-300">{currentAlgoInfo.best}</span>
+                          </div>
+                          <div className="flex flex-col gap-1 p-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                            <span className="text-[10px] font-medium text-yellow-400 uppercase tracking-wider">Average</span>
+                            <span className="text-sm font-bold font-mono text-yellow-300">{currentAlgoInfo.average}</span>
+                          </div>
+                          <div className="flex flex-col gap-1 p-2 bg-red-500/10 border border-red-500/20 rounded-lg">
+                            <span className="text-[10px] font-medium text-red-400 uppercase tracking-wider">Worst</span>
+                            <span className="text-sm font-bold font-mono text-red-300">{currentAlgoInfo.worst}</span>
+                          </div>
+                          <div className="flex flex-col gap-1 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                            <span className="text-[10px] font-medium text-blue-400 uppercase tracking-wider">Space</span>
+                            <span className="text-sm font-bold font-mono text-blue-300">{currentAlgoInfo.space}</span>
+                          </div>
+                        </div>
+                        <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium ${
+                          currentAlgoInfo.stable
+                            ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300"
+                            : "bg-orange-500/10 border border-orange-500/20 text-orange-300"
+                        }`}>
+                          {currentAlgoInfo.stable
+                            ? <CheckCircle className="w-3.5 h-3.5 flex-shrink-0" />
+                            : <XCircle className="w-3.5 h-3.5 flex-shrink-0" />}
+                          <span>{currentAlgoInfo.stable ? "Stable Sort" : "Unstable Sort"}</span>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
-        <div className="p-3 lg:p-4 border-t border-slate-700/50 bg-slate-900/50">
+        <div className="flex-shrink-0 p-3 lg:p-4 border-t border-slate-700/50 bg-slate-900/50">
           <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
             <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
             Ready to visualize

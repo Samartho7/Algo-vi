@@ -415,42 +415,7 @@ export default function Visualizer({ step, algorithm }) {
   if (algorithm?.includes("search")) {
     return (
       <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-indigo-50 overflow-hidden">
-        {/* Complexity Information */}
-        {(() => {
-          const algorithmType =
-            algorithm === "binary_search" ? "binary" : "linear";
-          const info = complexityInfo[algorithmType];
-          const arraySize = step?.array?.length || 0;
 
-          let expectedIterations = "N/A";
-          if (algorithmType === "linear") {
-            expectedIterations = `Avg: ${Math.ceil(arraySize / 2)}, Max: ${arraySize}`;
-          } else if (algorithmType === "binary") {
-            expectedIterations = `Max: ${Math.ceil(Math.log2(arraySize))}`;
-          }
-
-          return info ? (
-            <div className="flex-shrink-0 px-3 py-2 md:px-4 md:py-2.5 bg-gradient-to-r from-white to-slate-50 border-b border-slate-200">
-              <div className="flex flex-wrap items-center justify-center gap-1.5 md:gap-2 text-xs">
-                <span className="font-semibold text-slate-700 hidden md:inline">
-                  {info.name}:
-                </span>
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-green-100 rounded-full">
-                  <span className="text-green-700 font-medium">Best: {info.best}</span>
-                </div>
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-yellow-100 rounded-full">
-                  <span className="text-yellow-700 font-medium">Avg: {info.average}</span>
-                </div>
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-red-100 rounded-full">
-                  <span className="text-red-700 font-medium">Worst: {info.worst}</span>
-                </div>
-                <div className="flex items-center gap-1 px-2 py-0.5 bg-blue-100 rounded-full">
-                  <span className="text-blue-700 font-medium">Steps: {expectedIterations}</span>
-                </div>
-              </div>
-            </div>
-          ) : null;
-        })()}
 
         {/* Main Container */}
         <div className="flex-1 p-3 md:p-5 flex flex-col min-h-0">
@@ -832,46 +797,75 @@ export default function Visualizer({ step, algorithm }) {
             </AnimatePresence>
           </div>
 
-          {/* Current Step Info — always horizontal row */}
-          <div className="flex-shrink-0 mt-2 px-2 py-1.5 md:p-3 bg-slate-50 rounded-md border border-slate-200">
-            {step && (
-              <div className="flex items-center justify-between text-xs md:text-sm gap-2">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
-                  <span><strong>Action:</strong> {step.action}</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0"></div>
-                  <span><strong>Indices:</strong> {step.indices?.join(", ") || "None"}</span>
-                </div>
+          {/* Step Description Banner */}
+          <div className="flex-shrink-0 mt-2">
+            {step ? (
+              <motion.div
+                key={`${step.action}-${step.indices?.join("-")}`}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }}
+                className={`px-3 py-2 rounded-lg border-l-4 flex items-start gap-2 text-xs md:text-sm ${
+                  step.action === "done"
+                    ? "bg-green-50 border-green-400 text-green-800"
+                    : step.action === "swap"
+                    ? "bg-red-50 border-red-400 text-red-800"
+                    : step.action === "compare"
+                    ? "bg-yellow-50 border-yellow-400 text-yellow-800"
+                    : step.action === "merge"
+                    ? "bg-purple-50 border-purple-400 text-purple-800"
+                    : step.action === "pivot" || step.action === "partition"
+                    ? "bg-blue-50 border-blue-400 text-blue-800"
+                    : step.action === "insert" || step.action === "shift"
+                    ? "bg-emerald-50 border-emerald-400 text-emerald-800"
+                    : step.action === "min"
+                    ? "bg-orange-50 border-orange-400 text-orange-800"
+                    : "bg-slate-50 border-slate-400 text-slate-700"
+                }`}
+              >
+                <span className="text-base flex-shrink-0">
+                  {step.action === "done" ? "✅"
+                    : step.action === "swap" ? "🔄"
+                    : step.action === "compare" ? "👁️"
+                    : step.action === "merge" ? "🔀"
+                    : step.action === "pivot" ? "📍"
+                    : step.action === "partition" ? "✂️"
+                    : step.action === "insert" ? "📥"
+                    : step.action === "shift" ? "➡️"
+                    : step.action === "min" ? "🏷️"
+                    : "ℹ️"}
+                </span>
+                <span className="font-medium leading-snug">
+                  {step.action === "compare" && step.indices?.length >= 2
+                    ? `Comparing index ${step.indices[0]} (value: ${step.array?.[step.indices[0]]?.value}) with index ${step.indices[1]} (value: ${step.array?.[step.indices[1]]?.value})`
+                    : step.action === "swap" && step.indices?.length >= 2
+                    ? `Swapping index ${step.indices[0]} (value: ${step.array?.[step.indices[0]]?.value}) with index ${step.indices[1]} (value: ${step.array?.[step.indices[1]]?.value})`
+                    : step.action === "merge" && step.indices?.length >= 1
+                    ? `Merging element — placing value ${step.array?.[step.indices[0]]?.value} at index ${step.indices[0]}`
+                    : step.action === "pivot" && step.indices?.length >= 1
+                    ? `Pivot set at index ${step.indices[0]} (value: ${step.array?.[step.indices[0]]?.value})`
+                    : step.action === "partition" && step.indices?.length >= 1
+                    ? `Partition complete — pivot ${step.array?.[step.indices[0]]?.value} placed at its correct position (index ${step.indices[0]})`
+                    : step.action === "shift" && step.indices?.length >= 2
+                    ? `Shifting value ${step.array?.[step.indices[1]]?.value} right to make room`
+                    : step.action === "insert" && step.indices?.length >= 1
+                    ? `Inserting key at index ${step.indices[0]} (value: ${step.array?.[step.indices[0]]?.value})`
+                    : step.action === "min" && step.indices?.length >= 1
+                    ? `New minimum found — value ${step.array?.[step.indices[0]]?.value} at index ${step.indices[0]}`
+                    : step.action === "done"
+                    ? "✨ Array is fully sorted!"
+                    : `Action: ${step.action}`}
+                </span>
+              </motion.div>
+            ) : (
+              <div className="px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-500">
+                Press Play or click Next to start the visualization
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Complexity Info */}
-      <div className="flex-shrink-0 px-3 py-1.5 bg-gradient-to-r from-slate-50 to-slate-100 border-t border-slate-200">
-        {algorithm && complexityInfo[algorithm] && (
-          <div className="flex flex-wrap items-center justify-center gap-1.5 text-xs">
-            <span className="font-semibold text-slate-500 text-[10px]">
-              {complexityInfo[algorithm].name}:
-            </span>
-            <span className="px-1.5 py-0.5 bg-green-100 text-green-700 font-medium rounded-full">
-              Best: {complexityInfo[algorithm].best}
-            </span>
-            <span className="px-1.5 py-0.5 bg-yellow-100 text-yellow-700 font-medium rounded-full">
-              Avg: {complexityInfo[algorithm].average}
-            </span>
-            <span className="px-1.5 py-0.5 bg-red-100 text-red-700 font-medium rounded-full">
-              Worst: {complexityInfo[algorithm].worst}
-            </span>
-            <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 font-medium rounded-full">
-              Space: {complexityInfo[algorithm].space}
-            </span>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
