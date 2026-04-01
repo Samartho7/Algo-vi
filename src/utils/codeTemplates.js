@@ -691,5 +691,340 @@ public class TraverseList {
   }
 }`,
   },
+  singly_insert_tail: {
+    c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node { int data; struct Node* next; };
+
+struct Node* insertAtTail(struct Node* head, int data) {
+  struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+  newNode->data = data;
+  newNode->next = NULL;
+  if (head == NULL) return newNode;
+  struct Node* temp = head;
+  while (temp->next != NULL)
+    temp = temp->next;
+  temp->next = newNode;
+  return head;
+}
+
+int main() {
+  struct Node* head = NULL;
+  head = insertAtTail(head, 3);
+  head = insertAtTail(head, 5);
+  head = insertAtTail(head, 7);
+  return 0;
+}`,
+    cpp: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; };
+
+Node* insertAtTail(Node* head, int data) {
+  Node* newNode = new Node{data, nullptr};
+  if (!head) return newNode;
+  Node* temp = head;
+  while (temp->next)
+    temp = temp->next;
+  temp->next = newNode;
+  return head;
+}
+
+int main() {
+  Node* head = nullptr;
+  head = insertAtTail(head, 3);
+  head = insertAtTail(head, 5);
+  head = insertAtTail(head, 7);
+  return 0;
+}`,
+    java: `class Node {
+  int data;
+  Node next;
+  Node(int d) { data = d; next = null; }
+}
+
+public class InsertAtTail {
+  static Node insertAtTail(Node head, int data) {
+    Node newNode = new Node(data);
+    if (head == null) return newNode;
+    Node temp = head;
+    while (temp.next != null)
+      temp = temp.next;
+    temp.next = newNode;
+    return head;
+  }
+
+  public static void main(String[] args) {
+    Node head = null;
+    head = insertAtTail(head, 3);
+    head = insertAtTail(head, 5);
+    head = insertAtTail(head, 7);
+  }
+}`,
+  },
+  singly_insert_pos: {
+    c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node { int data; struct Node* next; };
+
+struct Node* insertAtPos(struct Node* head, int data, int pos) {
+  struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+  newNode->data = data;
+  if (pos == 0) { newNode->next = head; return newNode; }
+  struct Node* temp = head;
+  for (int i = 0; i < pos - 1 && temp->next; i++)
+    temp = temp->next;
+  newNode->next = temp->next;
+  temp->next = newNode;
+  return head;
+}
+
+int main() {
+  struct Node* head = NULL;
+  /* build 1->2->3 then insert 9 at pos 2 */
+  return 0;
+}`,
+    cpp: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; };
+
+Node* insertAtPos(Node* head, int data, int pos) {
+  Node* newNode = new Node{data, nullptr};
+  if (pos == 0) { newNode->next = head; return newNode; }
+  Node* temp = head;
+  for (int i = 0; i < pos - 1 && temp->next; i++)
+    temp = temp->next;
+  newNode->next = temp->next;
+  temp->next = newNode;
+  return head;
+}
+
+int main() {
+  Node* head = nullptr;
+  /* build list then insert */
+  return 0;
+}`,
+    java: `class Node {
+  int data;
+  Node next;
+  Node(int d) { data = d; next = null; }
+}
+
+public class InsertAtPos {
+  static Node insertAtPos(Node head, int data, int pos) {
+    Node newNode = new Node(data);
+    if (pos == 0) { newNode.next = head; return newNode; }
+    Node temp = head;
+    for (int i = 0; i < pos - 1 && temp.next != null; i++)
+      temp = temp.next;
+    newNode.next = temp.next;
+    temp.next = newNode;
+    return head;
+  }
+
+  public static void main(String[] args) {
+    // build list and call insertAtPos
+  }
+}`,
+  },
+  singly_delete_head: {
+    c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node { int data; struct Node* next; };
+
+struct Node* deleteHead(struct Node* head) {
+  if (head == NULL) return NULL;
+  struct Node* temp = head;
+  head = head->next;
+  free(temp);
+  return head;
+}
+
+int main() {
+  struct Node* head = NULL;
+  /* build list then call deleteHead */
+  head = deleteHead(head);
+  return 0;
+}`,
+    cpp: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; };
+
+Node* deleteHead(Node* head) {
+  if (!head) return nullptr;
+  Node* temp = head;
+  head = head->next;
+  delete temp;
+  return head;
+}
+
+int main() {
+  Node* head = nullptr;
+  /* build list then call deleteHead */
+  head = deleteHead(head);
+  return 0;
+}`,
+    java: `class Node {
+  int data;
+  Node next;
+  Node(int d) { data = d; next = null; }
+}
+
+public class DeleteHead {
+  static Node deleteHead(Node head) {
+    if (head == null) return null;
+    return head.next;  // GC handles old head
+  }
+
+  public static void main(String[] args) {
+    Node head = new Node(7);
+    head.next = new Node(5);
+    head.next.next = new Node(3);
+    head = deleteHead(head);
+  }
+}`,
+  },
+  singly_delete_tail: {
+    c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node { int data; struct Node* next; };
+
+struct Node* deleteTail(struct Node* head) {
+  if (!head || !head->next) { free(head); return NULL; }
+  struct Node* temp = head;
+  while (temp->next->next)
+    temp = temp->next;
+  free(temp->next);
+  temp->next = NULL;
+  return head;
+}
+
+int main() {
+  struct Node* head = NULL;
+  /* build list then call deleteTail */
+  head = deleteTail(head);
+  return 0;
+}`,
+    cpp: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; };
+
+Node* deleteTail(Node* head) {
+  if (!head || !head->next) { delete head; return nullptr; }
+  Node* temp = head;
+  while (temp->next->next)
+    temp = temp->next;
+  delete temp->next;
+  temp->next = nullptr;
+  return head;
+}
+
+int main() {
+  Node* head = nullptr;
+  /* build list then call deleteTail */
+  head = deleteTail(head);
+  return 0;
+}`,
+    java: `class Node {
+  int data;
+  Node next;
+  Node(int d) { data = d; next = null; }
+}
+
+public class DeleteTail {
+  static Node deleteTail(Node head) {
+    if (head == null || head.next == null) return null;
+    Node temp = head;
+    while (temp.next.next != null)
+      temp = temp.next;
+    temp.next = null;
+    return head;
+  }
+
+  public static void main(String[] args) {
+    Node head = new Node(3);
+    head.next = new Node(5);
+    head.next.next = new Node(7);
+    head = deleteTail(head);
+  }
+}`,
+  },
+  singly_search: {
+    c: `#include <stdio.h>
+#include <stdlib.h>
+
+struct Node { int data; struct Node* next; };
+
+int searchList(struct Node* head, int key) {
+  struct Node* curr = head;
+  int pos = 0;
+  while (curr != NULL) {
+    if (curr->data == key)
+      return pos;          /* found at pos */
+    curr = curr->next;
+    pos++;
+  }
+  return -1;               /* not found */
+}
+
+int main() {
+  /* build list and search */
+  return 0;
+}`,
+    cpp: `#include <iostream>
+using namespace std;
+
+struct Node { int data; Node* next; };
+
+int searchList(Node* head, int key) {
+  Node* curr = head;
+  int pos = 0;
+  while (curr) {
+    if (curr->data == key)
+      return pos;        // found
+    curr = curr->next;
+    pos++;
+  }
+  return -1;             // not found
+}
+
+int main() {
+  /* build list and search */
+  return 0;
+}`,
+    java: `class Node {
+  int data;
+  Node next;
+  Node(int d) { data = d; next = null; }
+}
+
+public class SearchList {
+  static int searchList(Node head, int key) {
+    Node curr = head;
+    int pos = 0;
+    while (curr != null) {
+      if (curr.data == key)
+        return pos;        // found
+      curr = curr.next;
+      pos++;
+    }
+    return -1;             // not found
+  }
+
+  public static void main(String[] args) {
+    Node head = new Node(3);
+    head.next = new Node(5);
+    head.next.next = new Node(7);
+    System.out.println(searchList(head, 5));
+  }
+}`,
+  },
 };
 export default codeTemplates;

@@ -411,6 +411,302 @@ export default function Visualizer({ step, algorithm }) {
     );
   }
 
+  // 🔗 Shared visualizer for new LL operations
+  const newLLOps = [
+    "singly_insert_tail",
+    "singly_insert_pos",
+    "singly_delete_head",
+    "singly_delete_tail",
+    "singly_search",
+  ];
+  if (newLLOps.includes(algorithm)) {
+    const nodes = step?.nodes || [];
+    const action = step?.action;
+    const isDone = action === "done";
+    const isInsert = action === "insert";
+    const isDelete = action === "delete";
+    const isFound = action === "found";
+    const isNotFound = action === "not_found";
+
+    // Gradient background per operation type
+    const bgMap = {
+      singly_insert_tail: "from-slate-50 to-emerald-50",
+      singly_insert_pos:  "from-slate-50 to-violet-50",
+      singly_delete_head: "from-slate-50 to-rose-50",
+      singly_delete_tail: "from-slate-50 to-orange-50",
+      singly_search:      "from-slate-50 to-cyan-50",
+    };
+
+    const accentMap = {
+      singly_insert_tail: { curr: "from-emerald-500 to-teal-600",   label: "emerald", border: "border-emerald-400", shadow: "rgba(16,185,129,0.4)" },
+      singly_insert_pos:  { curr: "from-violet-500 to-purple-600",  label: "violet",  border: "border-violet-400", shadow: "rgba(139,92,246,0.4)" },
+      singly_delete_head: { curr: "from-rose-500 to-red-600",       label: "rose",    border: "border-rose-400",   shadow: "rgba(244,63,94,0.4)"  },
+      singly_delete_tail: { curr: "from-orange-500 to-amber-600",   label: "orange",  border: "border-orange-400", shadow: "rgba(249,115,22,0.4)"  },
+      singly_search:      { curr: "from-cyan-500 to-sky-600",       label: "cyan",    border: "border-cyan-400",   shadow: "rgba(6,182,212,0.4)"   },
+    };
+    const accent = accentMap[algorithm];
+
+    const actionMeta = {
+      start:      { icon: "🔗", label: "Init",     color: "bg-slate-400" },
+      traverse:   { icon: "🔍", label: "Traverse", color: "bg-yellow-400" },
+      found_tail: { icon: "📌", label: "Tail",     color: "bg-teal-400" },
+      found_pos:  { icon: "📍", label: "Position", color: "bg-violet-400" },
+      insert:     { icon: "✅", label: "Insert",   color: "bg-emerald-500" },
+      delete:     { icon: "🗑️", label: "Delete",   color: "bg-red-500" },
+      compare:    { icon: "👁️", label: "Compare",  color: "bg-yellow-400" },
+      found:      { icon: "🎉", label: "Found",    color: "bg-green-500" },
+      not_found:  { icon: "❌", label: "Not Found",color: "bg-red-400" },
+      move:       { icon: "➡️", label: "Move",     color: "bg-cyan-400" },
+      done:       { icon: "✅", label: "Done",     color: "bg-green-500" },
+    };
+    const meta = actionMeta[action] || { icon: "ℹ️", label: action, color: "bg-slate-400" };
+
+    return (
+      <div className={`flex flex-col h-full bg-gradient-to-br ${bgMap[algorithm]} overflow-hidden`}>
+        <div className="flex-1 p-3 md:p-5 flex flex-col min-h-0">
+          <div className="flex-1 px-4 py-8 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center min-h-0 overflow-auto">
+            {/* Stable container — never unmounts, nodes animate in/out individually */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-10 pb-6">
+
+              <AnimatePresence>
+                {nodes.map((node, idx) => {
+                  const isLastNode = idx === nodes.length - 1;
+                  const isCurrent = node.isCurrent;
+                  const isNewNode = node.isNew;
+                  const isDeleted = node.isDeleted;
+
+                  const isTarget = node.isTarget;
+                  const isVisited = node.isVisited;
+
+                  // Compute node data-section style
+                  let dataBg = "bg-gradient-to-b from-blue-500 to-blue-600";
+                  let nodeBoxBorder = "border-slate-300";
+                  let boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+
+                  if (isDeleted) {
+                    dataBg = "bg-gradient-to-b from-red-400 to-red-500 opacity-70";
+                    nodeBoxBorder = "border-red-400";
+                    boxShadow = "0 0 0 3px rgba(239,68,68,0.4)";
+                  } else if (isNewNode) {
+                    dataBg = "bg-gradient-to-b from-emerald-400 to-green-500";
+                    nodeBoxBorder = "border-emerald-400";
+                    boxShadow = "0 0 0 3px rgba(16,185,129,0.5), 0 4px 20px rgba(16,185,129,0.3)";
+                  } else if (isTarget) {
+                    dataBg = "bg-gradient-to-b from-green-500 to-emerald-600";
+                    nodeBoxBorder = "border-green-400";
+                    boxShadow = "0 0 0 3px rgba(34,197,94,0.5), 0 4px 20px rgba(34,197,94,0.3)";
+                  } else if (isCurrent) {
+                    dataBg = `bg-gradient-to-b ${accent.curr}`;
+                    nodeBoxBorder = accent.border;
+                    boxShadow = `0 0 0 3px ${accent.shadow}, 0 4px 20px ${accent.shadow}`;
+                  } else if (isVisited) {
+                    dataBg = "bg-gradient-to-b from-slate-400 to-slate-500";
+                    nodeBoxBorder = "border-slate-300";
+                    boxShadow = "none";
+                  } else if (isDone) {
+                    dataBg = "bg-gradient-to-b from-green-500 to-emerald-600";
+                    nodeBoxBorder = "border-green-300";
+                  }
+
+                  return (
+                    <motion.div
+                      key={node.id}
+                      layout
+                      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                      animate={{ opacity: isDeleted ? 0.55 : 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                      transition={{ type: "spring", stiffness: 280, damping: 24 }}
+                      className="flex items-center gap-3"
+                    >
+                      <div className="relative">
+                        {/* Top labels */}
+                        <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-0.5 z-10 whitespace-nowrap">
+                          {node.isHead && (
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-yellow-400 to-orange-400 text-white rounded-full shadow border border-yellow-300"
+                            >
+                              HEAD
+                            </motion.div>
+                          )}
+                          {isNewNode && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-emerald-400 to-green-500 text-white rounded-full shadow border border-emerald-300"
+                            >
+                              NEW
+                            </motion.div>
+                          )}
+                          {isDeleted && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-red-400 to-red-500 text-white rounded-full shadow border border-red-300"
+                            >
+                              DEL
+                            </motion.div>
+                          )}
+                          {isTarget && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-full shadow border border-green-300"
+                            >
+                              FOUND
+                            </motion.div>
+                          )}
+                          {isCurrent && !isNewNode && !isDeleted && !isTarget && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -4 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className={`px-2 py-0.5 text-[10px] font-bold text-white rounded-full shadow border border-${accent.label}-300 bg-gradient-to-r ${accent.curr}`}
+                            >
+                              CURR
+                            </motion.div>
+                          )}
+                        </div>
+
+                        {/* Node block */}
+                        <motion.div
+                          animate={{ boxShadow, scale: isDeleted ? 0.92 : isCurrent || isNewNode || isTarget ? 1.08 : 1 }}
+                          transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                          className={`flex border-2 ${nodeBoxBorder} rounded-lg overflow-hidden min-w-[120px] bg-white transition-all duration-300 ${isDeleted ? "opacity-60" : ""}`}
+                        >
+                          {/* Data section */}
+                          <div className={`${dataBg} text-white p-3 text-center w-1/2 relative`}>
+                            <div className="text-base font-bold mb-0.5">{node.value}</div>
+                            <div className="text-[10px] font-mono opacity-90">Data</div>
+                            {isVisited && !isCurrent && (
+                              <div className="absolute top-1 right-1 text-[10px]">✓</div>
+                            )}
+                            {isDeleted && (
+                              <div className="absolute top-1 right-1 text-[10px]">✕</div>
+                            )}
+                          </div>
+                          {/* Next section */}
+                          <div className="bg-gradient-to-b from-slate-100 to-slate-200 text-slate-700 p-3 text-center w-1/2 border-l-2 border-slate-300">
+                            <div className="text-[10px] font-mono font-bold mb-1 truncate">{node.next ?? "NULL"}</div>
+                            <div className="text-[10px] font-mono opacity-75">Next</div>
+                          </div>
+                        </motion.div>
+
+                        {/* TAIL label below */}
+                        {node.isTail && !isDeleted && (
+                          <div className="absolute -bottom-7 left-1/2 -translate-x-1/2">
+                            <motion.div
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="px-2 py-0.5 text-[10px] font-bold bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-full shadow border border-green-300"
+                            >
+                              TAIL
+                            </motion.div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Arrow */}
+                      {!isLastNode && (
+                        <motion.div
+                          animate={{ color: isCurrent ? "#f59e0b" : "#94a3b8" }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <svg className="w-7 h-7 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="2" y1="12" x2="22" y2="12" />
+                            <polyline points="16,6 22,12 16,18" />
+                          </svg>
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+
+              {/* NULL terminus — stable, never remounts */}
+              {nodes.length > 0 && (
+                <motion.div
+                  animate={{ opacity: isDone ? 1 : 0.4, scale: isDone ? [1, 1.1, 1] : 1 }}
+                  transition={{ duration: 0.4 }}
+                  className="flex items-center gap-2"
+                >
+                  <svg className="w-7 h-7 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <polyline points="16,6 22,12 16,18" />
+                  </svg>
+                  <motion.div
+                    animate={{
+                      borderColor: isDone ? "#4ade80" : "#cbd5e1",
+                      color: isDone ? "#15803d" : "#94a3b8",
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="px-3 py-1.5 rounded-lg border-2 font-mono font-bold text-sm bg-slate-50"
+                  >NULL</motion.div>
+                </motion.div>
+              )}
+
+              {/* Empty state */}
+              {nodes.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex flex-col items-center justify-center py-10 text-slate-400"
+                >
+                  <div className="text-5xl mb-3">🔗</div>
+                  <div className="text-base font-medium">Empty Linked List</div>
+                  <div className="text-sm mt-1 text-slate-400">
+                    {isDone ? "Operation completed — list is empty." : "Press Play to start"}
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Status bar */}
+        <div className="flex-shrink-0 px-3 py-2 md:px-4 bg-white border-t border-slate-200">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className={`w-2.5 h-2.5 rounded-full ${meta.color} ${action === "traverse" || action === "compare" ? "animate-pulse" : ""}`} />
+            <span className="text-xs font-semibold text-slate-600">{meta.label}</span>
+            <span className="ml-auto text-xs text-slate-400">Step {step ? "active" : "—"}</span>
+          </div>
+          {step?.message && (
+            <motion.div
+              key={step.message}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`text-xs px-3 py-1.5 rounded-lg border-l-4 ${
+                isFound || isDone
+                  ? "bg-green-50 border-green-400 text-green-800"
+                  : isDelete || isNotFound
+                  ? "bg-red-50 border-red-400 text-red-800"
+                  : isInsert
+                  ? "bg-emerald-50 border-emerald-400 text-emerald-800"
+                  : action === "traverse" || action === "compare"
+                  ? "bg-yellow-50 border-yellow-400 text-yellow-800"
+                  : "bg-slate-50 border-slate-400 text-slate-700"
+              }`}
+            >
+              {meta.icon} {step.message}
+            </motion.div>
+          )}
+        </div>
+
+        {/* Legend */}
+        <div className="flex-shrink-0 px-3 py-1.5 bg-white border-t border-slate-100">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] text-slate-500">
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-blue-500 rounded" /><span>Default</span></div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-yellow-400 rounded" /><span>Current</span></div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-emerald-400 rounded" /><span>New / Found</span></div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-red-400 rounded" /><span>Deleted</span></div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-slate-400 rounded opacity-60" /><span>Visited</span></div>
+            <div className="flex items-center gap-1"><div className="w-2 h-2 bg-green-500 rounded" /><span>Done</span></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // 🧠 Enhanced Search Visualization (Linear / Binary)
   if (algorithm?.includes("search")) {
     return (

@@ -38,7 +38,8 @@ export default function Sidebar({
   setSidebarOpen,
 }) {
   const isLinkedList = algorithm?.startsWith("singly");
-  const isSearchAlgorithm = algorithm?.includes("search");
+  const isSearchAlgorithm = algorithm?.includes("search") && !isLinkedList;
+  const isLLSearch = algorithm === "singly_search";
   const [infoOpen, setInfoOpen] = useState(true);
 
   const currentAlgoInfo = complexityInfo[algorithm];
@@ -150,36 +151,43 @@ export default function Sidebar({
                   label="🔗 Linked List Operations"
                   className="text-slate-300"
                 >
-                  <option value="singly_insert_head">
-                    Singly - Insert at Head
-                  </option>
-                  <option value="singly_traversal">
-                    Singly - Traversal
-                  </option>
+                  <option value="singly_insert_head">Singly — Insert at Head</option>
+                  <option value="singly_insert_tail">Singly — Insert at Tail</option>
+                  <option value="singly_insert_pos">Singly — Insert at Position</option>
+                  <option value="singly_delete_head">Singly — Delete at Head</option>
+                  <option value="singly_delete_tail">Singly — Delete at Tail</option>
+                  <option value="singly_traversal">Singly — Traversal</option>
+                  <option value="singly_search">Singly — Search / Find</option>
                 </optgroup>
               </select>
               <ChevronDown className="absolute right-2.5 lg:right-3 top-3 lg:top-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
             </div>
           </div>
 
-          {/* Input Array (only for sorting and search algorithms, not linked lists) */}
-          {!isLinkedList && (
+          {/* Input Array / Linked List Input */}
+          {(!isLinkedList || isLinkedList) && (
             <div className="space-y-2 lg:space-y-3">
               <div className="flex items-center gap-2">
                 <Database className="w-4 h-4 text-blue-400" />
                 <label className="text-sm font-semibold text-slate-300">
-                  Input Array
+                  {isLinkedList ? "List Values" : "Input Array"}
                 </label>
               </div>
               <input
                 type="text"
                 value={inputArrayStr}
                 onChange={(e) => setInputArrayStr(e.target.value)}
-                placeholder="e.g. 5, 3, 8, 4, 2"
+                placeholder={isLinkedList ? "e.g. 3, 5, 7, 9" : "e.g. 5, 3, 8, 4, 2"}
                 className="w-full p-2.5 lg:p-3 rounded-lg bg-slate-800/50 border border-slate-700/50 text-white text-sm lg:text-base placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:bg-slate-800/70"
               />
               <p className="text-xs text-slate-500">
-                Separate numbers with commas
+                {algorithm === "singly_insert_tail"
+                  ? "Last value is inserted at tail; rest form the initial list"
+                  : algorithm === "singly_insert_pos"
+                  ? "Format: [list…, value, position] — last two values = insert value & position"
+                  : isLinkedList
+                  ? "Separate node values with commas"
+                  : "Separate numbers with commas"}
               </p>
             </div>
           )}
@@ -277,6 +285,33 @@ export default function Sidebar({
                     .filter(Boolean)}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* LL Search Target — only for singly_search */}
+          {isLLSearch && (
+            <div className="space-y-2 lg:space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-gradient-to-br from-cyan-500/20 to-sky-500/20 rounded-md">
+                  <Binary className="w-4 h-4 text-cyan-400" />
+                </div>
+                <label className="text-sm font-semibold text-slate-300">
+                  Search Value
+                </label>
+                <div className="ml-auto">
+                  <span className="px-2 py-1 text-xs font-medium bg-cyan-500/10 text-cyan-300 rounded-full border border-cyan-500/20">
+                    Optional
+                  </span>
+                </div>
+              </div>
+              <input
+                type="number"
+                value={searchTarget || ""}
+                onChange={(e) => setSearchTarget(e.target.value ? Number(e.target.value) : null)}
+                placeholder="Value to find in list…"
+                className="w-full p-2.5 lg:p-3 rounded-lg bg-slate-800/70 border border-slate-700/50 text-white text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500/50 transition-all duration-200 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <p className="text-xs text-slate-500">Leave empty to use first array value as target</p>
             </div>
           )}
 

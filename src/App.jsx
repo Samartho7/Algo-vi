@@ -14,6 +14,11 @@ import {
   parseLinkedListTraversal,
   parseLinearSearch,
   parseBinarySearch,
+  parseInsertAtTail,
+  parseInsertAtPosition,
+  parseDeleteAtHead,
+  parseDeleteAtTail,
+  parseLinkedListSearch,
 } from "./utils/parseAlgorithms";
 import codeTemplates from "./utils/codeTemplates";
 import { Menu, X } from "lucide-react";
@@ -83,40 +88,42 @@ export default function App() {
       insertion: parseInsertionSort,
       quick: parseQuickSort,
       singly_insert_head: parseSinglyInsertHead,
+      singly_insert_tail: parseInsertAtTail,
+      singly_insert_pos: parseInsertAtPosition,
+      singly_delete_head: parseDeleteAtHead,
+      singly_delete_tail: parseDeleteAtTail,
       singly_traversal: parseLinkedListTraversal,
+      singly_search: parseLinkedListSearch,
       linear_search: parseLinearSearch,
       binary_search: parseBinarySearch,
     };
+
+    const linkedListSearchAlgos = ["singly_search"];
+    const regularSearchAlgos = ["linear_search", "binary_search"];
+    const searchAlgos = [...regularSearchAlgos, ...linkedListSearchAlgos];
 
     let parsed1 = [],
       parsed2 = [],
       parsed = [];
 
-    if (["linear_search", "binary_search"].includes(algorithm1)) {
-      parsed1 =
-        searchTarget != null
-          ? parseMap[algorithm1](inputArray, searchTarget)
-          : [];
+    if (regularSearchAlgos.includes(algorithm1)) {
+      parsed1 = searchTarget != null ? parseMap[algorithm1](inputArray, searchTarget) : [];
     } else {
-      parsed1 = parseMap[algorithm1](inputArray);
+      parsed1 = parseMap[algorithm1] ? parseMap[algorithm1](inputArray) : [];
     }
 
-    if (["linear_search", "binary_search"].includes(algorithm2)) {
-      parsed2 =
-        searchTarget != null
-          ? parseMap[algorithm2](inputArray, searchTarget)
-          : [];
+    if (regularSearchAlgos.includes(algorithm2)) {
+      parsed2 = searchTarget != null ? parseMap[algorithm2](inputArray, searchTarget) : [];
     } else {
-      parsed2 = parseMap[algorithm2](inputArray);
+      parsed2 = parseMap[algorithm2] ? parseMap[algorithm2](inputArray) : [];
     }
 
-    if (["linear_search", "binary_search"].includes(algorithm)) {
-      parsed =
-        searchTarget != null
-          ? parseMap[algorithm](inputArray, searchTarget)
-          : [];
+    if (regularSearchAlgos.includes(algorithm)) {
+      parsed = searchTarget != null ? parseMap[algorithm](inputArray, searchTarget) : [];
+    } else if (linkedListSearchAlgos.includes(algorithm)) {
+      parsed = parseMap[algorithm](inputArray, searchTarget);
     } else {
-      parsed = parseMap[algorithm](inputArray);
+      parsed = parseMap[algorithm] ? parseMap[algorithm](inputArray) : [];
     }
 
     setSteps(parsed);
