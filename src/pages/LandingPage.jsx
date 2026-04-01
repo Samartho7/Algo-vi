@@ -40,7 +40,15 @@ const features = [
 // Keys in complexityInfo that belong to each visual category
 const SORTING_KEYS   = ["bubble", "selection", "insertion", "merge", "quick"];
 const SEARCHING_KEYS = ["linear_search", "binary_search"];
-const LL_KEYS        = ["singly_insert_head", "singly_traversal"];
+const LL_KEYS = [
+  "singly_insert_head",
+  "singly_insert_tail",
+  "singly_insert_pos",
+  "singly_delete_head",
+  "singly_delete_tail",
+  "singly_traversal",
+  "singly_search",
+];
 
 // Build the category list dynamically from complexityInfo so adding a new
 // algorithm to that file automatically shows it here too.
