@@ -237,23 +237,6 @@ function FloatingBubbles({ onStart }) {
               />
               {poppedFact.highlight}
             </div>
-
-            {/* CTA */}
-            <div className="flex items-center justify-between pt-1 border-t border-slate-700/40">
-              <p className="text-[11px] text-slate-500">To understand more →</p>
-              <motion.button
-                onClick={onStart}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.96 }}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 rounded-lg text-white shadow-md shadow-indigo-500/25 transition-all duration-200"
-              >
-                Start Visualizing
-                <motion.span
-                  animate={{ x: [0, 3, 0] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                >→</motion.span>
-              </motion.button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
