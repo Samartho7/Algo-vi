@@ -47,7 +47,7 @@ export default function App() {
   const [speed2, setSpeed2] = useState(1000);
   const [isComparePlaying, setIsComparePlaying] = useState(false);
   const [searchTarget, setSearchTarget] = useState(null);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
   const [activeTab, setActiveTab] = useState("visualization");
   const [activeTab1, setActiveTab1] = useState("visualization");
   const [activeTab2, setActiveTab2] = useState("visualization");
@@ -248,7 +248,7 @@ export default function App() {
           <div className="w-8" />
         </div>
 
-        <Topbar />
+        <Topbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         <div className="flex flex-1 overflow-hidden">
           {compareMode ? (

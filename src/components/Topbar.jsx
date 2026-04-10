@@ -5,9 +5,11 @@
 //     </div>
 //   );
 // }
-export default function Topbar() {
+import { Menu } from "lucide-react";
+
+export default function Topbar({ sidebarOpen, setSidebarOpen }) {
   return (
-    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 shadow-lg px-4 py-2 md:px-6 md:py-2.5 relative overflow-hidden">
+    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-700 shadow-lg px-4 py-2 md:px-6 md:py-2.5 relative overflow-hidden flex-shrink-0">
       {/* Animated background elements */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full blur-3xl animate-pulse"></div>
@@ -17,7 +19,16 @@ export default function Topbar() {
 
       {/* Main content */}
       <div className="relative z-10 flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 lg:space-x-4">
+          {/* Desktop Sidebar Toggle */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="hidden lg:flex items-center justify-center p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm text-white"
+            aria-label="Toggle Sidebar"
+          >
+            <Menu className="w-5 h-5 lg:w-6 lg:h-6" />
+          </button>
+
           {/* Logo/Icon */}
           <div className="flex items-center justify-center w-10 h-10 bg-white/20 rounded-lg backdrop-blur-sm">
             <svg

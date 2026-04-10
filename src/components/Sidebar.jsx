@@ -58,11 +58,11 @@ export default function Sidebar({
       <div
         className={`
       fixed lg:relative inset-y-0 left-0 z-50 lg:z-0
-      w-80 lg:w-80 xl:w-96
+      w-80 lg:w-80 xl:w-96 flex-shrink-0
       bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 
       text-white shadow-2xl
-      transform transition-transform duration-300 ease-in-out
-      ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+      transform transition-all duration-300 ease-in-out
+      ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:-ml-80 xl:-ml-96"}
     `}
       >
         {/* Header */}
